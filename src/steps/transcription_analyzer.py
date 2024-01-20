@@ -3,6 +3,10 @@ import os
 from src.steps.base_step import BaseStep
 
 class TranscriptionAnalyzer(BaseStep):
+    openaiPrompt = """
+        Analyze this text and provide key themes and insights
+    """
+
     def __init__(self, openai):
         super().__init__(openai, 'TranscriptionAnalyzer')
     
@@ -12,7 +16,7 @@ class TranscriptionAnalyzer(BaseStep):
             response = self.openai.chat.completions.create(
                 model="gpt-3.5-turbo",  # or another appropriate model
                 messages=[
-                    {"role": "system", "content": "Analyze this text and provide key themes and insights"},
+                    {"role": "system", "content": self.openaiPrompt},
                     {"role": "user", "content": transcription}
                 ]
             )

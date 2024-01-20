@@ -3,6 +3,9 @@ import os
 from src.steps.base_step import BaseStep
 
 class ImageDescriber(BaseStep):
+    openaiPrompt = """
+        Generate a detailed description for this scene
+    """
     def __init__(self, openai):
         super().__init__(openai, 'ImageDescriber')
     
@@ -20,9 +23,9 @@ class ImageDescriber(BaseStep):
             for scene in scenes:
                 try:
                     response = self.openai.chat.completions.create(
-                        model="gpt-3.5-turbo",
+                        model="gpt-3.5-turbo-0613",
                         messages=[
-                            {"role": "system", "content": "Generate a detailed description for this scene"},
+                            {"role": "system", "content": self.openaiPrompt},
                             {"role": "user", "content": scene}
                         ]
                     )

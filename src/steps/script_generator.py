@@ -3,6 +3,9 @@ import os
 from src.steps.base_step import BaseStep
 
 class ScriptGenerator(BaseStep):
+    openaiPrompt = """
+        Create a script for an animated episode based on this content
+    """
     def __init__(self, openai):
         super().__init__(openai, 'ScriptGenerator')
     
@@ -12,7 +15,7 @@ class ScriptGenerator(BaseStep):
             response = self.openai.chat.completions.create(
                 model="gpt-3.5-turbo",  # or another appropriate model
                 messages=[
-                    {"role": "system", "content": "Create a script for an animated episode based on this content"},
+                    {"role": "system", "content": self.openaiPrompt},
                     {"role": "user", "content": analysis}
                 ]
             )
