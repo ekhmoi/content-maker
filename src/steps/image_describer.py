@@ -5,7 +5,7 @@ class ImageDescriber(BaseStep):
         Generate a detailed description for this scene
     """
 
-    def __init__(self, output_folder,  openai):
+    def __init__(self, output_folder, openai):
         super().__init__('ImageDescriber', output_folder, openai)
         
     def execute(self, script: str):
@@ -13,7 +13,7 @@ class ImageDescriber(BaseStep):
         Generate detailed scene descriptions from the episode script and save them.
         """
         
-        self.log('5. Starting image description generation...')
+        self.log(f'5 - Starting image description generation...')
         scenes = script.split("\n\n")  # Split script into scenes
         image_descriptions = []
         scene_description_path = self.get_path('image_describer_result.txt')
@@ -34,7 +34,7 @@ class ImageDescriber(BaseStep):
                 except Exception as e:
                     print(f"An error occurred while generating scene description: {e}")
 
-        self.log(f'5. Image description generation complete. Results are saved to: {scene_description_path}')
+        self.log(f'5 - Image description generation complete - Results are saved to: {scene_description_path}')
         
         return image_descriptions
     

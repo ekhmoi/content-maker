@@ -1,5 +1,4 @@
 from pydub import AudioSegment
-import os
 
 from src.steps.base_step import BaseStep
 
@@ -8,12 +7,8 @@ class FileConverter(BaseStep):
         super().__init__('FileConverter', output_folder, openai)
         
     def execute(self, input_path: str):
-        self.log('1. Starting file conversion...')
+        self.log('1 - Starting file conversion...')
         try:
-            # Ensure the output directory exists
-            if not os.path.exists(self.output_folder):
-                os.makedirs(self.output_folder)
-
             # Load the input file
             audio = AudioSegment.from_file(input_path)
 
@@ -23,7 +18,7 @@ class FileConverter(BaseStep):
             # Export the file as a WAV
             audio.export(output_path, format='wav', parameters=["-ac", "1", "-ar", "16000"])
 
-            self.log(f'1. File conversion complete. Result is saved to: {output_path}')
+            self.log(f'1 - File conversion complete - Result is saved to: {output_path}')
             return output_path
 
         except Exception as e:

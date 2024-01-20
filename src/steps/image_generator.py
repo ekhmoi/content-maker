@@ -8,7 +8,7 @@ class ImageGenerator(BaseStep):
         """
         Generate images for each scene description using DALL-E and save the image URLs.
         """
-        self.log('6. Starting image generation...')
+        self.log('6 - Starting image generation...')
         image_urls = []
         image_urls_path = self.get_path("image_generator_result.txt")
 
@@ -18,7 +18,7 @@ class ImageGenerator(BaseStep):
                     response = self.openai.images.generate(
                         model="dall-e-3",
                         prompt=description,
-                        size="1024x1024",
+                        size="256x256",
                         quality="standard",
                         n=1,
                     )
@@ -27,5 +27,5 @@ class ImageGenerator(BaseStep):
                     file.write(image_url + "\n")
                 except Exception as e:
                     print(f"An error occurred while generating image: {e}")
-        self.log(f'6. Image generation complete. Results are saved to: {image_urls_path}')
+        self.log(f'6 - Image generation complete - Results are saved to: {image_urls_path}')
         return image_urls

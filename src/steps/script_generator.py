@@ -9,7 +9,7 @@ class ScriptGenerator(BaseStep):
         super().__init__('ScriptGenerator', output_folder, openai)
     
     def execute(self, analysis: str):
-        self.log('4. Starting script generation...')
+        self.log('4 - Starting script generation...')
         try:
             response = self.openai.chat.completions.create(
                 model="gpt-3.5-turbo",  # or another appropriate model
@@ -21,7 +21,7 @@ class ScriptGenerator(BaseStep):
             result = response.choices[0].message.content
             result_path = self.get_path("script_generator_result.txt")
             self.save_result(result_path, result)
-            self.log(f'4. Script generation complete. Result is saved to: {result_path}')
+            self.log(f'4 - Script generation complete - Result is saved to: {result_path}')
             
             return result
         except Exception as e:
