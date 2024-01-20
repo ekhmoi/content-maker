@@ -3,7 +3,7 @@
 ## Install dependencies
 
 ```sh
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt && cd ui && npm install && cd ../
 ```
 
 ## Run script
