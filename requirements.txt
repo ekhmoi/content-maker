@@ -1,3 +1,4 @@
 openai
 pydub
 ffmpeg-python
+websockets
