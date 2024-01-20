@@ -13,9 +13,8 @@ class ContentMaker:
         self.original_file_name = input_path.rsplit('.', 1)[0] + '.wav'
         self.input_path = input_path
         self.output_folder = output_folder
-        self.openai = OpenAI(
-            api_key = os.environ.get("OPEN_AI_API_KEY", openai_api_key)
-        )
+        self.openai = OpenAI(api_key = os.environ.get("OPEN_AI_API_KEY", openai_api_key))
+        
         self.file_converter = FileConverter(self.openai)
         self.audio_transcriber = AudioTranscriber(self.openai)
         self.transcription_analyzer = TranscriptionAnalyzer(self.openai)

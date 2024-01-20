@@ -1,5 +1,5 @@
-import subprocess
 import os
+from pydub import AudioSegment
 
 from src.steps.base_step import BaseStep
 
@@ -9,19 +9,20 @@ class FileConverter(BaseStep):
         
     def execute(self, input_path, output_folder):
         self.log('Starting file conversion...')
-        original_file_name = input_path.rsplit('.', 1)[0] + '.wav'
-        output_path = os.path.join(output_folder, os.path.splitext(original_file_name)[0] + '.wav')
-        command = [
-            'ffmpeg', 
-            '-err_detect', 'ignore_err',
-            '-analyzeduration', '2147483647',  # Max possible value for analyzeduration
-            '-probesize', '2147483647',       # Max possible value for probesize
-            '-i', input_path, 
-            '-acodec', 'pcm_s16le',
-            '-ar', '16000',
-            '-ac', '1',
-            output_path
-        ]
-        subprocess.run(command)
-        self.log('File conversion complete. Result is saved to' + output_path)
-        return output_path
+        try:
+            # Load the input file
+            audio = AudioSegment.from_file(input_path)
+
+            # Set file output format
+            original_file_name = os.path.splitext(os.path.basename(input_path))[0]
+            output_path = os.path.join(output_folder, original_file_name + '.wav')
+
+            # Export the file as a WAV
+            audio.export(output_path, format='wav', parameters=["-ac", "1", "-ar", "16000"])
+
+            self.log('File conversion complete. Result is saved to ' + output_path)
+            return output_path
+
+        except Exception as e:
+            self.log(f"An error occurred during file conversion: {str(e)}")
+            return None
