@@ -9,7 +9,7 @@ class TranscriptionAnalyzer(BaseStep):
         super().__init__('TranscriptionAnalyzer', output_folder, openai)
     
     def execute(self, transcription: str):
-        self.log('3. Starting analysis...')
+        self.log('3 - Starting analysis...')
         try:
             response = self.openai.chat.completions.create(
                 model="gpt-3.5-turbo",  # or another appropriate model
@@ -22,7 +22,7 @@ class TranscriptionAnalyzer(BaseStep):
             analysis_file_path = self.get_path("transcription_analyzer_result.txt")
 
             self.save_result(analysis_file_path, result)
-            self.log(f'3. Analysis complete. Result is saved to: {analysis_file_path}')
+            self.log(f'3 - Analysis complete - Result is saved to: {analysis_file_path}')
 
             return result
         except Exception as e:
