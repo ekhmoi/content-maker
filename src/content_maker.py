@@ -15,12 +15,12 @@ class ContentMaker:
         self.output_folder = output_folder
         self.openai = OpenAI(api_key = os.environ.get("OPEN_AI_API_KEY", openai_api_key))
         
-        self.file_converter = FileConverter(self.openai)
-        self.audio_transcriber = AudioTranscriber(self.openai)
-        self.transcription_analyzer = TranscriptionAnalyzer(self.openai)
-        self.script_generator = ScriptGenerator(self.openai)
-        self.image_describer = ImageDescriber(self.openai)
-        self.image_generator = ImageGenerator(self.openai)
+        self.file_converter = FileConverter(output_folder, self.openai)
+        self.audio_transcriber = AudioTranscriber(output_folder, self.openai)
+        self.transcription_analyzer = TranscriptionAnalyzer(output_folder, self.openai)
+        self.script_generator = ScriptGenerator(output_folder, self.openai)
+        self.image_describer = ImageDescriber(output_folder, self.openai)
+        self.image_generator = ImageGenerator(output_folder, self.openai)
       
     def execute(self):
         # Step 1. Ensure the input audio format is suitable for whisper AI
@@ -42,19 +42,19 @@ class ContentMaker:
         self.image_urls = self.generate_images()
         
     def convert_file(self):
-        self.file_converter_result = self.file_converter.execute(self.input_path, self.output_folder)
+        self.file_converter_result = self.file_converter.execute(self.input_path)
         
     def transcribe_wav(self, wav_path):
         self.audio_transcriber_result = self.audio_transcriber.execute(wav_path)
         
     def analyze_transcription(self, transcription):
-        self.transcription_analyzer_result = self.transcription_analyzer.execute(transcription, self.output_folder, self.original_file_name)
+        self.transcription_analyzer_result = self.transcription_analyzer.execute(transcription)
 
     def generate_script(self, analysis):
-        self.script_generator_result = self.script_generator.execute(analysis, self.output_folder, self.original_file_name)
+        self.script_generator_result = self.script_generator.execute(analysis)
         
     def describe_images(self, script: str):
-        self.image_describer_result = self.image_describer.execute(script, self.output_folder, self.original_file_name)
+        self.image_describer_result = self.image_describer.execute(script)
 
     def generate_images(self, image_descriptions: str):
-        self.image_generator_result = self.image_generator.execute(image_descriptions, self.output_folder, self.original_file_name)
+        self.image_generator_result = self.image_generator.execute(image_descriptions)

@@ -1,11 +1,13 @@
 import abc
 from openai import OpenAI
+import os
 
 class BaseStep(abc.ABC):
     
-    def __init__(self, openai: OpenAI, step_name: str):
+    def __init__(self, step_name: str, output_folder: str,  openai: OpenAI):
         super().__init__()
         self.openai = openai
+        self.output_folder = output_folder
         self.step_name = step_name
 
     @abc.abstractmethod
@@ -22,5 +24,8 @@ class BaseStep(abc.ABC):
         return content
     
     def log(self, message):
-        print(self.step_name + ': ' + message)
+        print('[' + self.step_name + ']: ' + message)
+
+    def get_path(self, file_name: str):
+        return os.path.join(self.output_folder, file_name)
     

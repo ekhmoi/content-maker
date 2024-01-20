@@ -1,17 +1,19 @@
 from src.steps.base_step import BaseStep
 
 class AudioTranscriber(BaseStep):
-    def __init__(self, openai):
-        super().__init__(openai, 'AudioTranscriber')
+    def __init__(self, output_folder, openai):
+        super().__init__('AudioTranscriber', output_folder, openai)
     
     def execute(self, wav_path: str):
-        self.log('Starting audio transcription...')
+        self.log('2. Starting audio transcription...')
         response = self.openai.audio.transcriptions.create(
             file=open(wav_path, 'rb'),
             model="whisper-1"
         )
-        self.save_result(wav_path.rsplit('.', 1)[0] + '.wav' + '-transcription.txt', response.text)
+        result_path = self.get_path('audio_transcriber_result.txt')
+        self.save_result(result_path, response.text)
 
-        self.log('Audio transcription complete. Result is saved to' + wav_path.rsplit('.', 1)[0] + '.wav' + '-transcription.txt')
+        self.log(f'2. Audio transcription complete. Result is saved to: {result_path}')
+
         return response.text
     

@@ -4,16 +4,16 @@ import os
 from src.steps.base_step import BaseStep
 
 class ImageGenerator(BaseStep):
-    def __init__(self, openai):
-        super().__init__(openai, 'ImageGenerator')
-    
-    def execute(self, image_descriptions: str, output_folder: str, original_file_name: str):
+    def __init__(self, output_folder, openai):
+        super().__init__('ImageGenerator', output_folder, openai)
+        
+    def execute(self, image_descriptions: str):
         """
         Generate images for each scene description using DALL-E and save the image URLs.
         """
-        self.log('Starting image generation...')
+        self.log('6. Starting image generation...')
         image_urls = []
-        image_urls_path = os.path.join(output_folder, f"{original_file_name}-image-urls.txt")
+        image_urls_path = self.get_path("image_generator_result.txt")
 
         with open(image_urls_path, 'w', encoding='utf-8') as file:
             for description in image_descriptions:
@@ -30,5 +30,5 @@ class ImageGenerator(BaseStep):
                     file.write(image_url + "\n")
                 except Exception as e:
                     print(f"An error occurred while generating image: {e}")
-        self.log('Image generation complete. Results are saved to'+ image_urls_path)
+        self.log(f'6. Image generation complete. Results are saved to: {image_urls_path}')
         return image_urls
