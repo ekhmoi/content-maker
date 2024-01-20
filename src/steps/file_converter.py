@@ -1,5 +1,5 @@
-import os
 from pydub import AudioSegment
+import os
 
 from src.steps.base_step import BaseStep
 
@@ -10,6 +10,10 @@ class FileConverter(BaseStep):
     def execute(self, input_path: str):
         self.log('1. Starting file conversion...')
         try:
+            # Ensure the output directory exists
+            if not os.path.exists(self.output_folder):
+                os.makedirs(self.output_folder)
+
             # Load the input file
             audio = AudioSegment.from_file(input_path)
 

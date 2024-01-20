@@ -1,6 +1,3 @@
-
-import os
-
 from src.steps.base_step import BaseStep
 
 class ImageGenerator(BaseStep):
