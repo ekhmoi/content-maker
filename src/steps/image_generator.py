@@ -18,7 +18,7 @@ class ImageGenerator(BaseStep):
                     response = self.openai.images.generate(
                         model="dall-e-3",
                         prompt=description,
-                        size="256x256",
+                        size="1024x1024",
                         quality="standard",
                         n=1,
                     )

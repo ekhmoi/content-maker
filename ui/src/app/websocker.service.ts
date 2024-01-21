@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter, map, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +36,17 @@ export class WebsocketService {
       };
     }
     return this.listener;
+  }
+
+  public once(command: string) {
+    return this.on(command).pipe(take(1));
+  }
+
+  public on(command: string) {
+    return this.listener.pipe(
+      filter((message) => message.command === command),
+      map(({ data }) => data)
+    );
   }
 
   public send(command: string, data: any): void {

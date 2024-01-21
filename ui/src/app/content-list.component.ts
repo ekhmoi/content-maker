@@ -6,7 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewContentConfigComponent } from './new-content-config.component';
 import { ContentCreatorService } from './content-creator.service';
 import { WebsocketService } from './websocker.service';
-import { filter, tap } from 'rxjs';
+import { filter, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-content-list',
@@ -56,7 +56,9 @@ import { filter, tap } from 'rxjs';
         </ul>
       </mat-card-content>
       <mat-card-actions style="justify-content: space-between">
-        <button mat-button>Delete</button>
+        <button mat-button (click)="deleteContent(content.folder_name)">
+          Delete
+        </button>
         <button
           mat-raised-button
           color="primary"
@@ -79,18 +81,20 @@ export class ContentListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.refresh();
+    this.ws.on('get_contents_result').subscribe((data) => {
+      this.contents = data;
+      this.cdr.detectChanges();
+    });
+  }
+
+  refresh() {
     this.ws.open
-      .pipe(filter((open) => !!open))
-      .subscribe(() => this.ws.send('get_contents', {}));
-    this.ws.listener
       .pipe(
-        tap(console.log),
-        filter((message) => message?.command === 'get_contents_result')
+        filter((open) => !!open),
+        take(1)
       )
-      .subscribe(({ data }) => {
-        this.contents = data;
-        this.cdr.detectChanges();
-      });
+      .subscribe(() => this.ws.send('get_contents', {}));
   }
 
   newContent() {
@@ -100,9 +104,19 @@ export class ContentListComponent implements OnInit {
 
     dialog.afterClosed().subscribe((res) => {
       if (res) {
-        this.service.setConfig(res);
-        this.router.navigate(['/new']);
+        // this.service.setConfig(res);
+        // this.router.navigate(['/new']);
+        setTimeout(() => {
+          this.refresh();
+        }, 200)
       }
     });
+  }
+
+  deleteContent(name: string) {
+    if (!confirm('Action is irrevertable. Delete content - ' + name + '?')) return;
+
+    this.ws.send('delete_content', { folder_name: name });
+    this.ws.once('delete_content_result').subscribe(() => this.refresh());
   }
 }

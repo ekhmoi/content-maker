@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MATERIAL_COMPONENTS } from './material.components';
-import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { FormControl, FormGroup } from '@angular/forms';
+import { WebsocketService } from './websocker.service';
+import { switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-new-content-config',
@@ -15,6 +16,15 @@ import { FormControl, FormGroup } from '@angular/forms';
         [formGroup]="form"
         style="display: flex; flex-direction: column; width: 100%; margin-top: 1rem"
       >
+        <mat-form-field appearance="outline">
+          <mat-label>Title</mat-label>
+          <input
+            type="text"
+            matInput
+            formControlName="title"
+            placeholder="Name your new content"
+          />
+        </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Youtube URL</mat-label>
           <input
@@ -29,6 +39,12 @@ import { FormControl, FormGroup } from '@angular/forms';
           <mat-label>Drop a file</mat-label>
           <input type="input" matInput placeholder="Drop your file here" />
         </mat-form-field>
+        <mat-slide-toggle
+          formControlName="automaticSteps"
+          style="margin: 1rem 0"
+        >
+          Automatically continue after each step
+        </mat-slide-toggle>
         <mat-form-field appearance="outline">
           <mat-label>Prompt</mat-label>
           <textarea
@@ -38,9 +54,6 @@ import { FormControl, FormGroup } from '@angular/forms';
             placeholder="You can improve result by providing key points to focus for example"
           ></textarea>
         </mat-form-field>
-        <mat-slide-toggle formControlName="pauseAfterEachStep">
-          Pause after each step
-        </mat-slide-toggle>
       </form>
     </div>
     <div mat-dialog-actions style="justify-content: flex-end">
@@ -53,14 +66,37 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class NewContentConfigComponent implements OnInit {
   form = new FormGroup({
+    title: new FormControl(''),
     input: new FormControl(''),
-    pauseAfterEachStep: new FormControl(false),
+    automaticSteps: new FormControl(true),
   });
-  constructor(private dialogRef: MatDialogRef<NewContentConfigComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<NewContentConfigComponent>,
+    private ws: WebsocketService
+  ) {}
 
   ngOnInit() {}
 
   start() {
-    this.dialogRef.close(this.form.value);
+    this.ws.send('download_content_from_youtube', {
+      folder_name: this.form.value.title,
+      youtube_url: this.form.value.input,
+    });
+    this.ws
+      .once('download_content_from_youtube_result')
+      .pipe(
+        tap(() => {
+          this.ws.send('execute_content_step', {
+            step: 0,
+            folder_name: this.form.value.title,
+          });
+        }),
+        switchMap(() => this.ws.once('execute_content_step_result'))
+      )
+      .subscribe((res) => {
+        console.log('Got new content', res);
+
+        this.dialogRef.close(true);
+      });
   }
 }

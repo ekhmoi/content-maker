@@ -1,5 +1,38 @@
 import os
+import shutil
 from src.content_maker import ContentMaker
+from src.steps.input_converter import InputConverter
+import threading
+
+def execute_content_step_thread(output_folder, data, openai_api_key):
+    """
+    This method takes the data dictionary and runs the ContentMaker from given data['step'] with given data['input']
+    data: {
+        step: number
+        input: string
+    }
+    """
+    
+    # Create ContentMaker instance
+
+    orderedStepName = [
+        'input.wav',
+        'audio_transcriber_result.txt',
+        'text_analyzer_result.txt',
+        'script_generator_result.txt',
+        'image_describer_result.txt',
+        'image_generator_result.txt',
+    ]
+    output_folder = f"{output_folder}/{data['folder_name']}"
+    step = int(data['step'])
+    input_path = f'{output_folder}/{orderedStepName[step]}'
+    content_maker = ContentMaker(step, input_path, output_folder, openai_api_key)
+    
+    # Execute the ContentMaker
+    content_maker.execute()
+    
+    # Return the results
+    return content_maker.results
 
 class ContentManager:
     def __init__(self, output_folder, openai_api_key):
@@ -9,7 +42,7 @@ class ContentManager:
 
     def get_contents(self, data):
         content_list = []
-        print("@@@@@@@@@@@@@@@@@", self.output_folder)
+        print("DASHSHAGH", self.output_folder)
         # Check if output_folder exists and is a directory
         if os.path.exists(self.output_folder) and os.path.isdir(self.output_folder):
             # Iterate through each item in the output_folder
@@ -56,33 +89,29 @@ class ContentManager:
                 with open(file_path, 'w') as file:
                     file.write(update['content'])
 
+   
+    
     def execute_content_step(self, data):
-        """
-        This method takes the data dictionary and runs the ContentMaker from given data['step'] with given data['input']
-        data: {
-            step: number
-            input: string
+        # This method starts a new thread
+        thread = threading.Thread(target=execute_content_step_thread, args=(self.output_folder, data, self.openai_api_key))
+        thread.start()
+        # Optionally, you can return the thread if you want to join it or check its status later
+        return {
+            'Status': 'done'
         }
-        """
-        
-        # Create ContentMaker instance
-
-        orderedStepName = [
-            'inputUrl',
-            'audio_transcriber_result',
-            'text_analyzer_result',
-            'script_generator_result',
-            'image_describer_result',
-            'image_generator_result',
-        ]
+    
+    def download_content_from_youtube(self, data):
         output_folder = f"{self.output_folder}/{data['folder_name']}"
-        step = int(data['step'])
-        input_path = f'{output_folder}/{orderedStepName[step]}.txt'
-        content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key)
-        
-        # Execute the ContentMaker
-        content_maker.execute()
-        
-        # Return the results
-        return content_maker.results
+        youtube_downloader = InputConverter(output_folder, None)
+        youtube_downloader.execute(data['youtube_url'])
 
+        return f'{output_folder}/input.wav'
+
+
+    def delete_content(self, data):
+        """
+        Delete folder under f"{self.output_folder}/{data['folder_name']}"
+        """
+        folder_path = os.path.join(self.output_folder, data['folder_name'])
+        if os.path.exists(folder_path) and os.path.isdir(folder_path):
+            shutil.rmtree(folder_path)

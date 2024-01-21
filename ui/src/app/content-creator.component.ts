@@ -21,11 +21,27 @@ import { MatToolbarModule } from '@angular/material/toolbar';
       }
 
       mat-form-field {
+        margin-top: 1rem;
         width: 100%;
+      }
+      mat-stepper {
+        height: calc(100% - 64px);
+        ::ng-deep {
+          .mat-horizontal-stepper-wrapper,
+          .mat-horizontal-content-container,
+          .mat-horizontal-stepper-content {
+            // height: 100%;
+          }
+        }
+
+        mat-form-field + div {
+          display: flex;
+          justify-content: space-between;
+        }
       }
 
       textarea {
-        min-height: calc(100vh - 300px) !important;
+        height: calc(100vh - 270px) !important;
       }
     `,
   ],
@@ -54,82 +70,89 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     <mat-stepper #stepper [linear]="false" [animationDuration]="'0'">
       <mat-step label="Converting">
         <div>
-          <button mat-button (click)="executeStep()">Next</button>
+          <button mat-raised-button color="primary" (click)="executeStep()">
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step label="Transcribing">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Transcription</mat-label>
           <textarea
-            [readonly]="!editing"
-            [disabled]="running"
+            [disabled]="running || !editing"
             matInput
             [(ngModel)]="details.audio_transcriber_result"
           ></textarea>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="executeStep()">Next</button>
+          <button mat-raised-button color="primary" (click)="executeStep()">
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step label="Analysing">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Analysis</mat-label>
           <textarea
-            [readonly]="!editing"
-            [disabled]="running"
+            [disabled]="running || !editing"
             matInput
             [(ngModel)]="details.text_analyzer_result"
           ></textarea>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="executeStep()">Next</button>
+          <button mat-raised-button color="primary" (click)="executeStep()">
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step label="Scripting">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Script</mat-label>
           <textarea
-            [readonly]="!editing"
-            [disabled]="running"
+            [disabled]="running || !editing"
             matInput
             [(ngModel)]="details.script_generator_result"
           ></textarea>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="executeStep()">Next</button>
+          <button mat-raised-button color="primary" (click)="executeStep()">
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step label="Imagining">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Image Descriptions</mat-label>
           <textarea
-            [readonly]="!editing"
-            [disabled]="running"
+            [disabled]="running || !editing"
             matInput
             [(ngModel)]="details.image_describer_result"
           ></textarea>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="executeStep()">Next</button>
+          <button mat-raised-button color="primary" (click)="executeStep()">
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step label="Drawing">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Images</mat-label>
           <textarea
-            [readonly]="!editing"
-            [disabled]="running"
+            [disabled]="running || !editing"
             matInput
             [(ngModel)]="details.image_generator_result"
           ></textarea>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="executeStep()">Next</button>
+          <button mat-raised-button color="primary" (click)="executeStep()">
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step>
@@ -192,11 +215,16 @@ export class ContentCreatorComponent implements OnInit {
   }
 
   executeStep() {
+    this.running = true;
     console.log(this.stepper);
     const step = this.stepper.selectedIndex + 1;
     this.ws.send('execute_content_step', {
       step: step,
       folder_name: this.id,
+    });
+    this.ws.on('execute_content_step_result').subscribe((res) => {
+      this.running = false;
+      console.log('Got res for some step', res);
     });
   }
 }

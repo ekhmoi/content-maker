@@ -1,10 +1,10 @@
 from openai import OpenAI
-from src.steps.file_converter import FileConverter
 from src.steps.audio_transcriber import AudioTranscriber
 from src.steps.text_analyzer import TextAnalyzer
 from src.steps.script_generator import ScriptGenerator
 from src.steps.image_describer import ImageDescriber
 from src.steps.image_generator import ImageGenerator
+from src.steps.input_converter import InputConverter
 
 class ContentMaker:
     def __init__(self, step, input_path, output_folder, openai_api_key):
@@ -15,7 +15,7 @@ class ContentMaker:
         self.openai = OpenAI(api_key =  openai_api_key)
         self.results = {}
 
-        self.file_converter = FileConverter(output_folder, self.openai)
+        self.input_converter = InputConverter(output_folder, self.openai)
         self.audio_transcriber = AudioTranscriber(output_folder, self.openai)
         self.text_analyzer = TextAnalyzer(output_folder, self.openai)
         self.script_generator = ScriptGenerator(output_folder, self.openai)
@@ -23,7 +23,7 @@ class ContentMaker:
         self.image_generator = ImageGenerator(output_folder, self.openai)
 
         self.steps = [
-            {'step': self.file_converter, 'step_name': self.file_converter.step_name},
+            {'step': self.input_converter, 'step_name': self.input_converter.step_name},
             {'step': self.audio_transcriber, 'step_name': self.audio_transcriber.step_name},
             {'step': self.text_analyzer, 'step_name': self.text_analyzer.step_name},
             {'step': self.script_generator, 'step_name': self.script_generator.step_name},
