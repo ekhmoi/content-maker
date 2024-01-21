@@ -8,7 +8,7 @@ from src.steps.image_generator import ImageGenerator
 
 class ContentMaker:
     def __init__(self, step, input_path, output_folder, openai_api_key):
-        print(f'[ContentMaker]: 0 - Initializing ContentMaker with step: {step}, input_path: {input_path}, output_folder: {output_folder}, openai_api_key: {openai_api_key}')
+        print(f'[ContentMaker]: 0 - Initializing ContentMaker with step: {step}, output_folder: {output_folder}, openai_api_key: {openai_api_key}')
         self.step = step
         self.input_path = input_path
         self.output_folder = output_folder

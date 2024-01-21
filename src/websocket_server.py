@@ -1,17 +1,12 @@
 import asyncio
 import websockets
 import json
-from src.content_manager import ContentManager
 
 class WebSocketServer:
-    def __init__(self, host, port):
+    def __init__(self, host, port, command_switch):
         self.host = host
         self.port = port
-        self.content_manager = ContentManager()
-        self.command_switch = {
-            'get_contents': self.content_manager.get_contents,
-            'get_content_details': self.content_manager.get_content_details,
-        }
+        self.command_switch = command_switch 
 
     async def convert_command(self, request_data, websocket):
         data_dict = json.loads(request_data)
