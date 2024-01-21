@@ -33,5 +33,4 @@ class ContentManager:
                 if os.path.isfile(file_path) and file_name != 'input.wav':
                     with open(file_path, 'r') as file:
                         content_details[file_name] = file.read()
-        print("dash", content_details)
         return content_details

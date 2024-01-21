@@ -19,15 +19,10 @@ export class AppComponent {
       .subscribe(
         (message) => {
           console.log('Received message:', message);
-          // Handle the received message
         },
         (error) => console.error(error),
         () => console.log('WebSocket connection completed')
       );
-  }
-
-  sendMessage(message: string): void {
-    this.websocketService.send('get-dashshaq', message);
   }
 
   ngOnDestroy() {
