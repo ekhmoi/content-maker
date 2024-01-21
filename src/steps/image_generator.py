@@ -1,3 +1,4 @@
+import json
 from src.steps.base_step import BaseStep
 
 class ImageGenerator(BaseStep):
@@ -11,6 +12,9 @@ class ImageGenerator(BaseStep):
         self.log('6 - Starting image generation...')
         image_urls = []
         image_urls_path = self.get_path("image_generator_result.txt")
+        
+        image_description_json = json.loads(image_descriptions)
+        das = image_description_json['script']['scenes']
 
         with open(image_urls_path, 'w', encoding='utf-8') as file:
             for description in image_descriptions:

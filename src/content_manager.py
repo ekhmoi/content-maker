@@ -30,10 +30,7 @@ def execute_content_step_thread(output_folder, data, openai_api_key):
     content_maker = ContentMaker(step, input_path, output_folder, openai_api_key)
     
     # Execute the ContentMaker
-    content_maker.execute()
-    
-    # Return the results
-    return content_maker.results
+    return content_maker.steps[step]['step'].execute(input_path)
 
 class ContentManager:
     def __init__(self, output_folder, openai_api_key):
