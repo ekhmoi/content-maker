@@ -31,7 +31,7 @@ class ImageGenerator(BaseStep):
                         image_url = response.data[0].url
                         image_urls.append(image_url)
                         file.write(image_url + "\n")
-                        self.log(f'6 - Image generation complete')
+                        self.log(f'6 - Image generation complete: {image_url}')
                     except Exception as e:
                         print(f"An error occurred while generating image: {e}")
 
