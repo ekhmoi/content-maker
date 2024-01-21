@@ -1,36 +1,9 @@
 import os
 import shutil
+import concurrent.futures
+
 from src.content_maker import ContentMaker
 from src.steps.input_converter import InputConverter
-import threading
-
-def execute_content_step_thread(output_folder, data, openai_api_key):
-    """
-    This method takes the data dictionary and runs the ContentMaker from given data['step'] with given data['input']
-    data: {
-        step: number
-        input: string
-    }
-    """
-    
-    # Create ContentMaker instance
-
-    orderedStepName = [
-        'input.wav',
-        'audio_transcriber_result.txt',
-        'text_analyzer_result.txt',
-        'script_generator_result.txt',
-        'image_describer_result.txt',
-        'image_generator_result.txt',
-    ]
-    output_folder = f"{output_folder}/{data['folder_name']}"
-    step = int(data['step'])
-    inputIndex = 0 if step == 0 else step - 1
-    input_path = f'{output_folder}/{orderedStepName[inputIndex]}'
-    content_maker = ContentMaker(step, input_path, output_folder, openai_api_key)
-    
-    # Execute the ContentMaker
-    return content_maker.steps[step]['step'].execute(input_path)
 
 class ContentManager:
     def __init__(self, output_folder, openai_api_key):
@@ -86,17 +59,46 @@ class ContentManager:
                 with open(file_path, 'w') as file:
                     file.write(update['content'])
 
-   
+    def result_callback(self, result):
+        # This function will handle the result
+        print("Result received:", result)
+        # You can add more code here to process the result
     
     def execute_content_step(self, data):
-        # This method starts a new thread
-        thread = threading.Thread(target=execute_content_step_thread, args=(self.output_folder, data, self.openai_api_key))
-        thread.start()
-        # Optionally, you can return the thread if you want to join it or check its status later
-        return {
-            'Status': 'done'
-        }
-    
+        """
+        This method starts a new thread using ThreadPoolExecutor to execute 
+        execute_content_step_thread and get the return value.
+        """
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(self.execute_content_step_thread, data)
+            result = future.result()  # This will wait for the function to complete and return its result
+            print("Result received:", result)
+            return result  # Return the result from the thread
+       
+    def execute_content_step_thread(self, data):
+        """
+        This method takes the data dictionary and runs the ContentMaker from given data['step'] 
+        with given data['input']
+        """
+        orderedStepName = [
+            'input.wav',
+            'audio_transcriber_result.txt',
+            'text_analyzer_result.txt',
+            'script_generator_result.txt',
+            'image_describer_result.txt',
+            'image_generator_result.txt',
+        ]
+        output_folder = f"{self.output_folder}/{data['folder_name']}"
+        step = int(data['step'])
+        inputIndex = 0 if step == 0 else step - 1
+        input_path = f'{output_folder}/{orderedStepName[inputIndex]}'
+        content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key)
+
+        # Execute the ContentMaker
+        result = content_maker.steps[step]['step'].execute(input_path)
+        return result  # Return the result from the thread
+
+       
     def download_content_from_youtube(self, data):
         output_folder = f"{self.output_folder}/{data['folder_name']}"
         youtube_downloader = InputConverter(output_folder, None)
