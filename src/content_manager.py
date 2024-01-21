@@ -95,7 +95,8 @@ class ContentManager:
         content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key)
 
         # Execute the ContentMaker
-        result = content_maker.steps[step]['step'].execute(input_path)
+        step_input = input_path if content_maker.startStep == 0 else content_maker.read_file(input_path)
+        result = content_maker.steps[step]['step'].execute(step_input)
         return result  # Return the result from the thread
 
        
