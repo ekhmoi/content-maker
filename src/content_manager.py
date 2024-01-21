@@ -91,22 +91,17 @@ class ContentManager:
         output_folder = f"{self.output_folder}/{data['folder_name']}"
         step = int(data['step'])
         inputIndex = 0 if step == 0 else step - 1
-        input_path = f'{output_folder}/{orderedStepName[inputIndex]}'
+        input_path = data.get('input') or f'{output_folder}/{orderedStepName[inputIndex]}'
+
         content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key)
+        step_to_execute = content_maker.steps[step]
 
         # Execute the ContentMaker
         step_input = input_path if content_maker.startStep == 0 else content_maker.read_file(input_path)
-        result = content_maker.steps[step]['step'].execute(step_input)
+        result = step_to_execute['step'].execute(step_input)
         return result  # Return the result from the thread
 
        
-    def download_content_from_youtube(self, data):
-        output_folder = f"{self.output_folder}/{data['folder_name']}"
-        youtube_downloader = InputConverter(output_folder, None)
-        youtube_downloader.execute(data['youtube_url'])
-
-        return f'{output_folder}/input.wav'
-
 
     def delete_content(self, data):
         """

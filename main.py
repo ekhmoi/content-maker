@@ -67,7 +67,6 @@ def main():
             'get_content_details': content_manager.get_content_details,
             'update_content_details': content_manager.update_content_details,
             'execute_content_step': content_manager.execute_content_step,
-            'download_content_from_youtube': content_manager.download_content_from_youtube,
             'delete_content': content_manager.delete_content
         })
         server.run()

@@ -67,10 +67,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </button>
       </div>
     </mat-toolbar>
-    <mat-stepper #stepper [linear]="false" [animationDuration]="'0'">
+    <mat-stepper #stepper [linear]="false" [animationDuration]="'150ms'">
       <mat-step label="Converting">
         <div>
-          <button mat-raised-button color="primary" (click)="executeStep()">
+          <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">
             Next
           </button>
         </div>
@@ -86,7 +86,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-raised-button color="primary" (click)="executeStep()">
+          <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">
             Next
           </button>
         </div>
@@ -102,7 +102,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-raised-button color="primary" (click)="executeStep()">
+          <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">
             Next
           </button>
         </div>
@@ -118,7 +118,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-raised-button color="primary" (click)="executeStep()">
+          <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">
             Next
           </button>
         </div>
@@ -134,7 +134,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-raised-button color="primary" (click)="executeStep()">
+          <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">
             Next
           </button>
         </div>
@@ -150,7 +150,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
-          <button mat-raised-button color="primary" (click)="executeStep()">
+          <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">
             Next
           </button>
         </div>
@@ -223,7 +223,17 @@ export class ContentCreatorComponent implements OnInit {
       folder_name: this.id,
     });
     this.ws.on('execute_content_step_result').subscribe((res) => {
+      const orderedStepName = [
+          'input',
+          'audio_transcriber_result',
+          'text_analyzer_result',
+          'script_generator_result',
+          'image_describer_result',
+          'image_generator_result',
+      ]
       this.running = false;
+      this.details[orderedStepName[this.stepper.selectedIndex + 1]] = res;
+      this.stepper.next();
       console.log('Got res for some step', res);
     });
   }
