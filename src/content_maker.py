@@ -7,9 +7,9 @@ from src.steps.image_generator import ImageGenerator
 from src.steps.input_converter import InputConverter
 
 class ContentMaker:
-    def __init__(self, step, input_path, output_folder, openai_api_key):
-        print(f'[ContentMaker]: 0 - Initializing ContentMaker with step: {step}, output_folder: {output_folder}, openai_api_key: {openai_api_key}')
-        self.step = step
+    def __init__(self, startStep, input_path, output_folder, openai_api_key):
+        print(f'[ContentMaker]: 0 - Initializing ContentMaker with step: {startStep}, output_folder: {output_folder}, openai_api_key: {openai_api_key}')
+        self.startStep = startStep
         self.input_path = input_path
         self.output_folder = output_folder
         self.openai = OpenAI(api_key =  openai_api_key)
@@ -33,10 +33,10 @@ class ContentMaker:
       
     def execute(self):
         # The initial input for the first step
-        step_input = self.input_path if self.step == 0 else self.read_file(self.input_path)
+        step_input = self.input_path if self.startStep == 0 else self.read_file(self.input_path)
 
         # Loop over the steps starting from self.step
-        for current_step in self.steps[self.step:]:
+        for current_step in self.steps[self.startStep:]:
             step_function = current_step['step'].execute
             step_name = current_step['step_name']
             step_result = step_function(step_input)
