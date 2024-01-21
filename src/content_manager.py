@@ -25,7 +25,8 @@ def execute_content_step_thread(output_folder, data, openai_api_key):
     ]
     output_folder = f"{output_folder}/{data['folder_name']}"
     step = int(data['step'])
-    input_path = f'{output_folder}/{orderedStepName[step - 1]}'
+    inputIndex = 0 if step == 0 else step - 1
+    input_path = f'{output_folder}/{orderedStepName[inputIndex]}'
     content_maker = ContentMaker(step, input_path, output_folder, openai_api_key)
     
     # Execute the ContentMaker

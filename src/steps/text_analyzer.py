@@ -25,7 +25,7 @@ response_defenition = {
 
 class TextAnalyzer(BaseStep):
     openai_prompt = '''
-        Analyze this text and provide key themes and insights.
+        Analyze this text and provide key themes and insights with detailed descriptions.
         Return the items in a JSON array.
         Use provided function 'analyze_text' for response.
     '''
@@ -34,7 +34,7 @@ class TextAnalyzer(BaseStep):
         super().__init__('TextAnalyzer', output_folder, openai)
     
     def execute(self, text: str):
-        self.log('3 - Starting analysis...')
+        self.log('3 - Starting analysis of text: ' + text)
         try:
             response = self.openai.chat.completions.create(
                 model='gpt-3.5-turbo-0613',
@@ -50,7 +50,7 @@ class TextAnalyzer(BaseStep):
             analysis_file_path = self.get_path('text_analyzer_result.txt')
 
             self.save_result(analysis_file_path, result)
-            self.log(f'3 - Analysis complete. Result is saved to: {analysis_file_path}')
+            self.log(f'3 - Analysis complete. Result is saved to: {analysis_file_path}. Results: {result}')
 
             return result
         except Exception as e:

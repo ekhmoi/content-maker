@@ -9,28 +9,48 @@ response_defenition = {
         'parameters': {
             'type': 'object',
             'properties': {
-                'scenes': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'sceneId': { 'type': 'string' },
-                            'actions': {
-                                'type': 'array',
-                                'items': {
-                                    'type': 'object',
-                                    'properties': {
-                                        'actionId': { 'type': 'string' },
-                                        'imageDescription': { 
-                                            'type': 'string',
-                                            'description':'Detailed description of the action'
+                'script': {
+                    'type': 'object',
+                    'properties': {
+                        'title': { 'type': 'string' },
+                        'genre': { 'type': 'string' },
+                        'synopsis': { 'type': 'string' },
+                        'characters': {
+                            'type': 'array',
+                            'items': {
+                                'type': 'object',
+                                'properties': {
+                                    'id': { 'type': 'string' },
+                                    'name': { 'type': 'string' },
+                                    'description': { 'type': 'string' },
+                                    'role': { 'type': 'string' },
+                                },
+                            }
+                        },
+                        'scenes': {
+                            'type': 'array',
+                            'items': {
+                                'type': 'object',
+                                'properties': {
+                                    'sceneId': { 'type': 'string' },
+                                    'actions': {
+                                        'type': 'array',
+                                        'items': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'actionId': { 'type': 'string' },
+                                                'imageDescription': { 
+                                                    'type': 'string',
+                                                    'description':'Detailed description of the action'
+                                                }
+                                            }
                                         }
-                                    }
+                                    },
                                 }
-                            },
-                        }
+                            }
+                        },
                     }
-                }
+                },
             }
         }
     }
@@ -38,7 +58,8 @@ response_defenition = {
 
 class ImageDescriber(BaseStep):
     openai_prompt = """
-        Generate a detailed description for the each 'action' of the each item in 'scenes' in provided JSON object.
+        Generate a detailed description for the each 'action' of the each item in 'scenes' in provided 'script' JSON object.
+        The description should be detailed enough to draw an image of the action.
         Use provided function 'describe_image' for response.
     """
 
