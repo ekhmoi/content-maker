@@ -4,3 +4,4 @@ outputs/
 
 *.wav
 *.mp3
+.env

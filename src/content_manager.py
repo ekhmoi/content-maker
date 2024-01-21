@@ -42,7 +42,6 @@ class ContentManager:
 
     def get_contents(self, data):
         content_list = []
-        print("DASHSHAGH", self.output_folder)
         # Check if output_folder exists and is a directory
         if os.path.exists(self.output_folder) and os.path.isdir(self.output_folder):
             # Iterate through each item in the output_folder

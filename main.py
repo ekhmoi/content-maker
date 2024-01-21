@@ -2,10 +2,9 @@ import argparse
 from src.content_maker import ContentMaker
 from src.content_manager import ContentManager
 from src.websocket_server import WebSocketServer
+from dotenv import load_dotenv
 
 import os
-import subprocess
-import threading
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -34,6 +33,8 @@ def start_watcher():
     my_observer.start()
 
 def main():
+    load_dotenv()
+    print('key' ,os.getenv("OPEN_AI_API_KEY"))
     # Create a parser
     parser = argparse.ArgumentParser(description="CLI for converting files.")
 
@@ -45,7 +46,7 @@ def main():
     parser.add_argument('-s', '--step', required=False, help='Step', default='0')
     parser.add_argument('-o', '--output', required=False, help='Output file path')
     parser.add_argument('-p', '--port', required=False, help='Port when running serve command', default='6789')
-    parser.add_argument('-k', '--key', required=False, help='Open AI API Key', default=os.environ.get("OPENAI_API_KEY"))
+    parser.add_argument('-k', '--key', required=False, help='Open AI API Key', default=os.getenv("OPEN_AI_API_KEY"))
 
     # Parse arguments
     args = parser.parse_args()

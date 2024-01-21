@@ -5,3 +5,4 @@ websockets
 pytube
 watchdog
 moviepy
+python-dotenv
