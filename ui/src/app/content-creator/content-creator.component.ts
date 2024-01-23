@@ -63,6 +63,21 @@ export class ContentCreatorComponent implements OnInit {
       this.ws.open.pipe(filter((open) => !!open)).subscribe(() => {
         this.ws.send('get_content_details', this.id);
       });
+
+      this.ws.on('execute_content_step_result').subscribe((res) => {
+        console.log('execute_content_step_result', res);
+        const orderedStepName = [
+          'input',
+          'audio_transcriber_result',
+          'text_analyzer_result',
+          'script_generator_result',
+          'image_describer_result',
+          'image_generator_result',
+        ];
+        this.running = false;
+        this.details[orderedStepName[this.stepper.selectedIndex + 1]] = res;
+        this.stepper.next();
+      });
     }
   }
 
@@ -80,20 +95,6 @@ export class ContentCreatorComponent implements OnInit {
     this.ws.send('execute_content_step', {
       step: step,
       folder_name: this.id,
-    });
-    this.ws.on('execute_content_step_result').subscribe((res) => {
-      const orderedStepName = [
-        'input',
-        'audio_transcriber_result',
-        'text_analyzer_result',
-        'script_generator_result',
-        'image_describer_result',
-        'image_generator_result',
-      ];
-      this.running = false;
-      this.details[orderedStepName[this.stepper.selectedIndex + 1]] = res;
-      this.stepper.next();
-      console.log('Got res for some step', res);
     });
   }
 }
