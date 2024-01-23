@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, filter, map, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Observable,
+  Subject,
+  filter,
+  map,
+  take,
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -49,11 +57,15 @@ export class WebsocketService {
     );
   }
 
-  public send(command: string, data: any): void {
+  public send(command: string, data: any, stream = false) {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify({ command, data }));
+      return stream
+        ? this.on(`${command}_result`)
+        : this.once(`${command}_result`);
     } else {
       console.error('WebSocket connection is not open.');
+      return EMPTY;
     }
   }
 

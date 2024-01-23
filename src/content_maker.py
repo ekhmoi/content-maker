@@ -7,20 +7,21 @@ from src.steps.image_generator import ImageGenerator
 from src.steps.input_converter import InputConverter
 
 class ContentMaker:
-    def __init__(self, startStep, input_path, output_folder, openai_api_key):
+    def __init__(self, startStep, input_path, output_folder, openai_api_key, message_queue):
         print(f'[ContentMaker]: 0 - Initializing ContentMaker with step: {startStep}, output_folder: {output_folder}, openai_api_key: {openai_api_key}')
         self.startStep = startStep
         self.input_path = input_path
         self.output_folder = output_folder
         self.openai = OpenAI(api_key =  openai_api_key)
         self.results = {}
+        self.message_queue = message_queue
 
-        self.input_converter = InputConverter(output_folder, self.openai)
-        self.audio_transcriber = AudioTranscriber(output_folder, self.openai)
-        self.text_analyzer = TextAnalyzer(output_folder, self.openai)
-        self.script_generator = ScriptGenerator(output_folder, self.openai)
-        self.image_describer = ImageDescriber(output_folder, self.openai)
-        self.image_generator = ImageGenerator(output_folder, self.openai)
+        self.input_converter = InputConverter(output_folder, self.openai, self.message_queue)
+        self.audio_transcriber = AudioTranscriber(output_folder, self.openai, self.message_queue)
+        self.text_analyzer = TextAnalyzer(output_folder, self.openai, self.message_queue)
+        self.script_generator = ScriptGenerator(output_folder, self.openai, self.message_queue)
+        self.image_describer = ImageDescriber(output_folder, self.openai, self.message_queue)
+        self.image_generator = ImageGenerator(output_folder, self.openai, self.message_queue)
 
         self.steps = [
             {'step': self.input_converter, 'step_name': self.input_converter.step_name},

@@ -67,7 +67,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         </button>
       </div>
     </mat-toolbar>
-    <mat-stepper #stepper [linear]="false" [animationDuration]="'150ms'">
+    <mat-stepper #stepper [linear]="false" [animationDuration]="'150ms'" *ngIf="details">
       <mat-step label="Converting">
         <div>
           <button mat-raised-button [disabled]="running" color="primary" (click)="executeStep()">

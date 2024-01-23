@@ -1,14 +1,16 @@
 import abc
 from openai import OpenAI
 import os
+from queue import Queue
 
 class BaseStep(abc.ABC):
     
-    def __init__(self, step_name: str, output_folder: str,  openai: OpenAI):
+    def __init__(self, step_name: str, output_folder: str,  openai: OpenAI, queue: Queue):
         super().__init__()
         self.openai = openai
         self.output_folder = output_folder
         self.step_name = step_name
+        self.queue = queue
 
     @abc.abstractmethod
     def execute(self):
@@ -28,4 +30,7 @@ class BaseStep(abc.ABC):
 
     def get_path(self, file_name: str):
         return os.path.join(self.output_folder, file_name)
+    
+    def send_message(self, command: str, data: any):
+        self.queue.put((command, data))
     

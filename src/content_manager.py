@@ -1,11 +1,16 @@
 import os
 import shutil
 import concurrent.futures
+from queue import Queue
+import asyncio
 
+from src.websocket_server import WebSocketServer
 from src.content_maker import ContentMaker
 from src.steps.input_converter import InputConverter
 
 class ContentManager:
+    queue = Queue()
+    
     def __init__(self, output_folder, openai_api_key):
         self.output_folder = output_folder
         self.openai_api_key = openai_api_key
@@ -70,12 +75,12 @@ class ContentManager:
         execute_content_step_thread and get the return value.
         """
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            future = executor.submit(self.execute_content_step_thread, data)
+            future = executor.submit(self.execute_content_step_thread, data, self.queue)
             result = future.result()  # This will wait for the function to complete and return its result
             print("Result received:", result)
             return result  # Return the result from the thread
        
-    def execute_content_step_thread(self, data):
+    def execute_content_step_thread(self, data, queue):
         """
         This method takes the data dictionary and runs the ContentMaker from given data['step'] 
         with given data['input']
@@ -93,15 +98,21 @@ class ContentManager:
         inputIndex = 0 if step == 0 else step - 1
         input_path = data.get('input') or f'{output_folder}/{orderedStepName[inputIndex]}'
 
-        content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key)
+        content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key, queue)
         step_to_execute = content_maker.steps[step]
 
         # Execute the ContentMaker
-        step_input = input_path if content_maker.startStep == 0 else content_maker.read_file(input_path)
+        step_input = input_path if content_maker.startStep < 2 else content_maker.read_file(input_path)
         result = step_to_execute['step'].execute(step_input)
         return result  # Return the result from the thread
 
-       
+    # Somewhere in your main thread or async loop
+    async def process_message_queue(self, ws: WebSocketServer):
+        # while True:
+        if not self.queue.empty():
+            print('Processing messages', self.queue.qsize())
+            message = self.queue.get()
+            await ws.send_message(*message)
 
     def delete_content(self, data):
         """

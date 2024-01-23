@@ -1,8 +1,8 @@
 from src.steps.base_step import BaseStep
 
 class AudioTranscriber(BaseStep):
-    def __init__(self, output_folder, openai):
-        super().__init__('AudioTranscriber', output_folder, openai)
+    def __init__(self, *args):
+        super().__init__('AudioTranscriber', *args)
     
     def execute(self, wav_path: str):
         self.log('2 - Starting audio transcription...')

@@ -3,7 +3,8 @@ from src.content_maker import ContentMaker
 from src.content_manager import ContentManager
 from src.websocket_server import WebSocketServer
 from dotenv import load_dotenv
-
+import asyncio
+import threading
 import os
 
 from watchdog.observers import Observer
@@ -34,7 +35,7 @@ def start_watcher():
 
 def main():
     load_dotenv()
-    print('key' ,os.getenv("OPEN_AI_API_KEY"))
+    print('key', os.getenv("OPEN_AI_API_KEY"))
     # Create a parser
     parser = argparse.ArgumentParser(description="CLI for converting files.")
 
@@ -69,14 +70,24 @@ def main():
             'execute_content_step': content_manager.execute_content_step,
             'delete_content': content_manager.delete_content
         })
+
+        message_processing_thread = threading.Thread(target=process_messages, args=(content_manager.process_message_queue, server))
+        message_processing_thread.start()
+        # print('print after run')
+     
         server.run()
-         # Add this at the end of your main function to keep the script running
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            my_observer.stop()
-            my_observer.join()
+        # asyncio.create_task(content_manager.process_message_queue(server))
+        # Add this at the end of your main function to keep the script running
+
+def process_messages(processing_func, server):
+    try:
+        while True:
+            time.sleep(1)
+            asyncio.run(processing_func(server))
+    except KeyboardInterrupt:
+        my_observer.stop()
+        my_observer.join()
+
         
 
 if __name__ == "__main__":

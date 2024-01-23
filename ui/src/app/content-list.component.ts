@@ -105,7 +105,7 @@ export class ContentListComponent implements OnInit {
     dialog.afterClosed().subscribe((res) => {
       if (res) {
         // this.service.setConfig(res);
-        // this.router.navigate(['/new']);
+        this.router.navigate(['/details', res]);
         setTimeout(() => {
           this.refresh();
         }, 200)
