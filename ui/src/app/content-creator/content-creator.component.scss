@@ -11,7 +11,7 @@ mat-toolbar {
 mat-form-field {
   margin-top: 1rem;
   width: 100%;
-  height: calc(100% - 45px);
+  height: calc(100% - 54px);
 }
 mat-stepper {
   height: calc(100% - 64px);
@@ -34,10 +34,6 @@ mat-stepper {
   }
 }
 
-// textarea {
-//   height: calc(100vh - 270px) !important;
-// }
-
 .step-content {
   display: flex;
   flex-direction: row;
@@ -51,8 +47,15 @@ mat-stepper {
   }
 }
 
+// ::ng-deep {
+//   .mat-horizontal-stepper-header-container {
+//     width: fit-content !important;
+//   }
+// }
+
+
 ::ng-deep {
-  .mat-horizontal-stepper-header-container {
-    width: fit-content !important;
+  mat-step-header {
+    border-radius: 40px;
   }
 }

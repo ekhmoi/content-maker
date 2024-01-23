@@ -6,6 +6,7 @@ import { MATERIAL_COMPONENTS } from '../material.components';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-content-creator',
@@ -20,6 +21,13 @@ import { DomSanitizer } from '@angular/platform-browser';
   ],
 })
 export class ContentCreatorComponent implements OnInit {
+  step1Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+  step2Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+  step3Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+  step4Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+  step5Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+  step6Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+
   id!: string;
   originalDetails!: any;
   details!: any;
@@ -75,7 +83,7 @@ export class ContentCreatorComponent implements OnInit {
           'image_generator_result',
         ];
         this.running = false;
-        this.details[orderedStepName[this.stepper.selectedIndex + 1]] = res;
+        this.details[orderedStepName[this.stepper.selectedIndex]] = res;
       });
     }
   }
@@ -87,11 +95,14 @@ export class ContentCreatorComponent implements OnInit {
     this.ws.send('update_content_details', { folder_name: this.id, updates });
   }
 
-  executeStep() {
-    this.running = true;
-    console.log(this.stepper);
+  onNextClick() {
     const step = this.stepper.selectedIndex + 1;
     this.stepper.next();
+    this.executeStep(step);
+  }
+
+  executeStep(step = this.stepper.selectedIndex) {
+    this.running = true;
     this.ws.send('execute_content_step', {
       step: step,
       folder_name: this.id,

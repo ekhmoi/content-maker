@@ -12,12 +12,6 @@
     <button mat-icon-button *ngIf="running">
       <mat-icon>pause</mat-icon>
     </button>
-    <button mat-icon-button *ngIf="!editing" (click)="editing = true">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
-      <mat-icon>save</mat-icon>
-    </button>
   </div>
 </mat-toolbar>
 
@@ -28,10 +22,20 @@
   *ngIf="details"
   [orientation]="'horizontal'"
 >
-  <mat-step label="Converting">
+  <mat-step [stepControl]="step1Control" label="Converting">
     <div class="step-content">
       <div class="input">
-        <h2>Input</h2>
+        <mat-toolbar>
+          Input
+          <div class="buttons">
+            <!-- <button mat-icon-button *ngIf="!editing" (click)="editing = true">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
+              <mat-icon>save</mat-icon>
+            </button> -->
+          </div>
+        </mat-toolbar>
         <div class="youtube-container">
           <iframe
             id="player"
@@ -44,7 +48,18 @@
         </div>
       </div>
       <div class="output">
-        <h2>Output</h2>
+        <mat-toolbar>
+          Output
+          <div class="buttons">
+            <!-- <button
+              mat-icon-button
+              (click)="executeStep()"
+              *ngIf="!running; else loadingSpinner"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button> -->
+          </div>
+        </mat-toolbar>
       </div>
     </div>
 
@@ -54,21 +69,42 @@
         mat-raised-button
         [disabled]="running"
         color="primary"
-        (click)="executeStep()"
+        (click)="onNextClick()"
       >
         Next
       </button>
     </div>
   </mat-step>
 
-  <mat-step label="Transcribing">
+  <mat-step [stepControl]="step2Control" label="Transcribing">
     <div class="step-content">
       <div class="input">
-        <h2>Input</h2>
+        <mat-toolbar>
+          Input
+          <div class="buttons">
+            <!-- <button mat-icon-button *ngIf="!editing" (click)="editing = true">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
+              <mat-icon>save</mat-icon>
+            </button> -->
+          </div>
+        </mat-toolbar>
         <mat-label>WAV File</mat-label>
       </div>
       <div class="output">
-        <h2>Output</h2>
+        <mat-toolbar>
+          Output
+          <div class="buttons">
+            <button
+              mat-icon-button
+              (click)="executeStep()"
+              *ngIf="!running; else loadingSpinner"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Transcription</mat-label>
           <textarea
@@ -85,17 +121,27 @@
         mat-raised-button
         [disabled]="running"
         color="primary"
-        (click)="executeStep()"
+        (click)="onNextClick()"
       >
         Next
       </button>
     </div>
   </mat-step>
 
-  <mat-step label="Analysing">
+  <mat-step [stepControl]="step3Control" label="Analysing">
     <div class="step-content">
       <div class="input">
-        <h2>Input</h2>
+        <mat-toolbar>
+          Input
+          <div class="buttons">
+            <button mat-icon-button *ngIf="!editing" (click)="editing = true">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Transcription</mat-label>
           <textarea
@@ -106,7 +152,18 @@
         </mat-form-field>
       </div>
       <div class="output">
-        <h2>Output</h2>
+        <mat-toolbar>
+          Output
+          <div class="buttons">
+            <button
+              mat-icon-button
+              (click)="executeStep()"
+              *ngIf="!running; else loadingSpinner"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Analysis</mat-label>
           <textarea
@@ -123,16 +180,26 @@
         mat-raised-button
         [disabled]="running"
         color="primary"
-        (click)="executeStep()"
+        (click)="onNextClick()"
       >
         Next
       </button>
     </div>
   </mat-step>
-  <mat-step label="Scripting">
+  <mat-step [stepControl]="step4Control" label="Scripting">
     <div class="step-content">
       <div class="input">
-        <h2>Input</h2>
+        <mat-toolbar>
+          Input
+          <div class="buttons">
+            <button mat-icon-button *ngIf="!editing" (click)="editing = true">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Analysis</mat-label>
           <textarea
@@ -143,7 +210,18 @@
         </mat-form-field>
       </div>
       <div class="output">
-        <h2>Output</h2>
+        <mat-toolbar>
+          Output
+          <div class="buttons">
+            <button
+              mat-icon-button
+              (click)="executeStep()"
+              *ngIf="!running; else loadingSpinner"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Script</mat-label>
           <textarea
@@ -160,16 +238,26 @@
         mat-raised-button
         [disabled]="running"
         color="primary"
-        (click)="executeStep()"
+        (click)="onNextClick()"
       >
         Next
       </button>
     </div>
   </mat-step>
-  <mat-step label="Imagining">
+  <mat-step [stepControl]="step5Control" label="Imagining">
     <div class="step-content">
       <div class="input">
-        <h2>Input</h2>
+        <mat-toolbar>
+          Input
+          <div class="buttons">
+            <button mat-icon-button *ngIf="!editing" (click)="editing = true">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Script</mat-label>
           <textarea
@@ -180,7 +268,18 @@
         </mat-form-field>
       </div>
       <div class="output">
-        <h2>Output</h2>
+        <mat-toolbar>
+          Output
+          <div class="buttons">
+            <button
+              mat-icon-button
+              (click)="executeStep()"
+              *ngIf="!running; else loadingSpinner"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Image Descriptions</mat-label>
           <textarea
@@ -197,16 +296,26 @@
         mat-raised-button
         [disabled]="running"
         color="primary"
-        (click)="executeStep()"
+        (click)="onNextClick()"
       >
         Next
       </button>
     </div>
   </mat-step>
-  <mat-step label="Drawing">
+  <mat-step [stepControl]="step6Control" label="Drawing">
     <div class="step-content">
       <div class="input">
-        <h2>Input</h2>
+        <mat-toolbar>
+          Input
+          <div class="buttons">
+            <button mat-icon-button *ngIf="!editing" (click)="editing = true">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Image Descriptions</mat-label>
           <textarea
@@ -217,7 +326,18 @@
         </mat-form-field>
       </div>
       <div class="output">
-        <h2>Output</h2>
+        <mat-toolbar>
+          Output
+          <div class="buttons">
+            <button
+              mat-icon-button
+              (click)="executeStep()"
+              *ngIf="!running; else loadingSpinner"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar>
         <mat-form-field appearance="outline">
           <mat-label>Images</mat-label>
           <textarea
@@ -234,7 +354,7 @@
         mat-raised-button
         [disabled]="running"
         color="primary"
-        (click)="executeStep()"
+        (click)="onNextClick()"
       >
         Next
       </button>
@@ -250,4 +370,9 @@
       <button mat-button (click)="stepper.reset()">Reset</button>
     </div>
   </mat-step>
+
 </mat-stepper>
+
+<ng-template #loadingSpinner>
+  <mat-spinner [diameter]="30"></mat-spinner>
+</ng-template>

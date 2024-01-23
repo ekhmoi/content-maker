@@ -27,6 +27,19 @@ import { filter, take, tap } from 'rxjs';
     `,
   ],
   template: `
+  <mat-toolbar>
+  <span>
+    Your Contents
+  </span>
+  <div class="buttons">
+    <!-- <button mat-icon-button *ngIf="!running">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="running">
+      <mat-icon>pause</mat-icon>
+    </button> -->
+  </div>
+</mat-toolbar>
     <button
       mat-raised-button
       color="primary"

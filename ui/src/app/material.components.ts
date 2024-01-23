@@ -5,8 +5,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export const MATERIAL_COMPONENTS = [
   CommonModule,
@@ -19,4 +22,6 @@ export const MATERIAL_COMPONENTS = [
   MatFormFieldModule,
   MatInputModule,
   MatSlideToggleModule,
+  MatProgressSpinnerModule,
+  MatToolbarModule,
 ];
