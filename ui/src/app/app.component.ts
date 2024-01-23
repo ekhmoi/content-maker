@@ -19,7 +19,7 @@ export class AppComponent {
       .connect(this.wsURI)
       .subscribe(
         (message) => {
-          console.log('Received message:', message);
+          console.log('Received message:', message.command);
         },
         (error) => console.error(error),
         () => console.log('WebSocket connection completed')

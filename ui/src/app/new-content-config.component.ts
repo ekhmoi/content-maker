@@ -178,7 +178,6 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
     });
     this.ws.once('execute_content_step_result').subscribe((res) => {
       this.result = res;
-      console.log('Got res', this.result);
     });
     const supportedCommands = Object.keys(this.messages);
     this.subs.push(

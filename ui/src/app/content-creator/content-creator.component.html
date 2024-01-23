@@ -25,17 +25,7 @@
   <mat-step [stepControl]="step1Control" label="Converting">
     <div class="step-content">
       <div class="input">
-        <mat-toolbar>
-          Input
-          <div class="buttons">
-            <!-- <button mat-icon-button *ngIf="!editing" (click)="editing = true">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button *ngIf="editing" (click)="saveChanges()">
-              <mat-icon>save</mat-icon>
-            </button> -->
-          </div>
-        </mat-toolbar>
+        <mat-toolbar> Input </mat-toolbar>
         <div class="youtube-container">
           <iframe
             id="player"
@@ -48,18 +38,14 @@
         </div>
       </div>
       <div class="output">
-        <mat-toolbar>
-          Output
-          <div class="buttons">
-            <!-- <button
-              mat-icon-button
-              (click)="executeStep()"
-              *ngIf="!running; else loadingSpinner"
-            >
-              <mat-icon>refresh</mat-icon>
-            </button> -->
-          </div>
-        </mat-toolbar>
+        <mat-toolbar> Output </mat-toolbar>
+        <audio controls>
+          <source
+            src="http://localhost:8080/{{ id }}/input.wav"
+            type="audio/wav"
+          />
+          Your browser does not support the audio element.
+        </audio>
       </div>
     </div>
 
@@ -90,7 +76,13 @@
             </button> -->
           </div>
         </mat-toolbar>
-        <mat-label>WAV File</mat-label>
+        <audio controls>
+          <source
+            [src]="'http://localhost:8080/' + id + '/input.wav'"
+            type="audio/wav"
+          />
+          Your browser does not support the audio element.
+        </audio>
       </div>
       <div class="output">
         <mat-toolbar>
@@ -119,7 +111,8 @@
       <button mat-button matStepperPrevious>Back</button>
       <button
         mat-raised-button
-        [disabled]="running"
+        [disabled]="running || !details.audio_transcriber_result"
+        [matTooltip]="!details.audio_transcriber_result ? 'Output of current step is required to continue' : ''"
         color="primary"
         (click)="onNextClick()"
       >
@@ -178,7 +171,8 @@
       <button mat-button matStepperPrevious>Back</button>
       <button
         mat-raised-button
-        [disabled]="running"
+        [disabled]="running || !details.text_analyzer_result"
+        [matTooltip]="!details.text_analyzer_result ? 'Output of current step is required to continue' : ''"
         color="primary"
         (click)="onNextClick()"
       >
@@ -236,7 +230,8 @@
       <button mat-button matStepperPrevious>Back</button>
       <button
         mat-raised-button
-        [disabled]="running"
+        [disabled]="running || !details.script_generator_result"
+        [matTooltip]="!details.script_generator_result ? 'Output of current step is required to continue' : ''"
         color="primary"
         (click)="onNextClick()"
       >
@@ -294,7 +289,8 @@
       <button mat-button matStepperPrevious>Back</button>
       <button
         mat-raised-button
-        [disabled]="running"
+        [disabled]="running || !details.image_describer_result"
+        [matTooltip]="!details.image_describer_result ? 'Output of current step is required to continue' : ''"
         color="primary"
         (click)="onNextClick()"
       >
@@ -352,7 +348,8 @@
       <button mat-button matStepperPrevious>Back</button>
       <button
         mat-raised-button
-        [disabled]="running"
+        [disabled]="running || !details.image_generator_result"
+        [matTooltip]="!details.image_generator_result ? 'Output of current step is required to continue' : ''"
         color="primary"
         (click)="onNextClick()"
       >
@@ -370,7 +367,6 @@
       <button mat-button (click)="stepper.reset()">Reset</button>
     </div>
   </mat-step>
-
 </mat-stepper>
 
 <ng-template #loadingSpinner>

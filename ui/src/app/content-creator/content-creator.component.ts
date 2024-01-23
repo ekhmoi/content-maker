@@ -1,5 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { WebsocketService } from '../websocker.service';
 import { filter } from 'rxjs';
 import { MATERIAL_COMPONENTS } from '../material.components';
@@ -20,13 +26,25 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
     RouterModule,
   ],
 })
-export class ContentCreatorComponent implements OnInit {
-  step1Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
-  step2Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
-  step3Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
-  step4Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
-  step5Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
-  step6Control = new FormGroup({formCtrl: new FormControl('', [Validators.required])});
+export class ContentCreatorComponent implements OnInit, AfterViewInit {
+  step1Control = new FormGroup({
+    formCtrl: new FormControl('', [Validators.required]),
+  });
+  step2Control = new FormGroup({
+    formCtrl: new FormControl('', [Validators.required]),
+  });
+  step3Control = new FormGroup({
+    formCtrl: new FormControl('', [Validators.required]),
+  });
+  step4Control = new FormGroup({
+    formCtrl: new FormControl('', [Validators.required]),
+  });
+  step5Control = new FormGroup({
+    formCtrl: new FormControl('', [Validators.required]),
+  });
+  step6Control = new FormGroup({
+    formCtrl: new FormControl('', [Validators.required]),
+  });
 
   id!: string;
   originalDetails!: any;
@@ -47,9 +65,21 @@ export class ContentCreatorComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private ws: WebsocketService,
     private sanitizer: DomSanitizer
   ) {}
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const step = +(this.route.snapshot.queryParamMap.get('step') || '0');
+      this.stepper.selectedIndex = step;
+      this.stepper.selectionChange.subscribe((val) => {
+        console.log('Next value', val);
+        this.router.navigate(['.'], {relativeTo: this.route, queryParams: {step: val.selectedIndex}, replaceUrl: true})
+      });
+    }, 50);
+  }
 
   ngOnInit() {
     if (this.route.snapshot.paramMap.has('id')) {
@@ -73,7 +103,6 @@ export class ContentCreatorComponent implements OnInit {
       });
 
       this.ws.on('execute_content_step_result').subscribe((res) => {
-        console.log('execute_content_step_result', res);
         const orderedStepName = [
           'input',
           'audio_transcriber_result',

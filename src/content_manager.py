@@ -65,7 +65,7 @@ class ContentManager:
 
     def result_callback(self, result):
         # This function will handle the result
-        print("Result received:", result)
+        print("Result received:")
         # You can add more code here to process the result
     
     def execute_content_step(self, data):
@@ -76,7 +76,7 @@ class ContentManager:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future = executor.submit(self.execute_content_step_thread, data, self.queue)
             result = future.result()  # This will wait for the function to complete and return its result
-            print("Result received:", result)
+            print("Result received:")
             return result  # Return the result from the thread
        
     def execute_content_step_thread(self, data, queue):

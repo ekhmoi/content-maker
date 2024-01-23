@@ -15,6 +15,9 @@ mat-form-field {
 }
 mat-stepper {
   height: calc(100% - 64px);
+  button {
+    pointer-events: auto;
+  }
   mat-form-field ::ng-deep {
     .mat-mdc-form-field-flex,
     .mat-mdc-form-field-infix,
@@ -22,13 +25,16 @@ mat-stepper {
       height: 100%;
     }
   }
+  mat-toolbar {
+    padding-left: 0 !important;
+  }
 
   mat-form-field + div,
   .step-content + div {
     display: flex;
     justify-content: space-between;
     position: absolute;
-    bottom: 1rem;
+    top: 150px;
     right: 1rem;
     left: 1rem;
   }
@@ -37,6 +43,7 @@ mat-stepper {
 .step-content {
   display: flex;
   flex-direction: row;
+  padding-top: 40px;
   height: calc(100vh - 200px) !important;
 
   .output,
@@ -52,7 +59,6 @@ mat-stepper {
 //     width: fit-content !important;
 //   }
 // }
-
 
 ::ng-deep {
   mat-step-header {

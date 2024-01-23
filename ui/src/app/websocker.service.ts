@@ -22,7 +22,6 @@ export class WebsocketService {
       this.socket = new WebSocket(url);
 
       this.socket.onmessage = (event) => {
-        console.log('Returning data', event.data);
         let data = event.data;
         try {
           data = JSON.parse(data);
@@ -32,7 +31,6 @@ export class WebsocketService {
         this.listener.next(data);
       };
       this.socket.onopen = (ev) => {
-        console.log('Socket opened', ev);
         if (this.open.getValue() === false) {
           this.open.next(true);
         }

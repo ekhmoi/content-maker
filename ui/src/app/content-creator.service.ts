@@ -7,7 +7,6 @@ export class ContentCreatorService {
   constructor() {}
 
   setConfig(config: any) {
-    console.log('Setting config', config);
     this.config = config;
   }
 }

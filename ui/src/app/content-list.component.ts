@@ -7,6 +7,7 @@ import { NewContentConfigComponent } from './new-content-config.component';
 import { ContentCreatorService } from './content-creator.service';
 import { WebsocketService } from './websocker.service';
 import { filter, take, tap } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-content-list',
@@ -27,19 +28,17 @@ import { filter, take, tap } from 'rxjs';
     `,
   ],
   template: `
-  <mat-toolbar>
-  <span>
-    Your Contents
-  </span>
-  <div class="buttons">
-    <!-- <button mat-icon-button *ngIf="!running">
+    <mat-toolbar>
+      <span> Your Contents </span>
+      <div class="buttons">
+        <!-- <button mat-icon-button *ngIf="!running">
       <mat-icon>play_arrow</mat-icon>
     </button>
     <button mat-icon-button *ngIf="running">
       <mat-icon>pause</mat-icon>
     </button> -->
-  </div>
-</mat-toolbar>
+      </div>
+    </mat-toolbar>
     <button
       mat-raised-button
       color="primary"
@@ -57,11 +56,11 @@ import { filter, take, tap } from 'rxjs';
         <mat-card-title>{{ content.folder_name }}</mat-card-title>
         <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
       </mat-card-header>
-      <!-- <img
+      <img
         mat-card-image
-        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
+        [src]="getYoutubeUrl(content)"
         alt="Photo of a Shiba Inu"
-      /> -->
+      />
       <mat-card-content>
         <ul>
           <li *ngFor="let file of content.file_names">{{ file }}</li>
@@ -90,7 +89,8 @@ export class ContentListComponent implements OnInit {
     private dialog: MatDialog,
     private ws: WebsocketService,
     private service: ContentCreatorService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -121,15 +121,22 @@ export class ContentListComponent implements OnInit {
         this.router.navigate(['/details', res]);
         setTimeout(() => {
           this.refresh();
-        }, 200)
+        }, 200);
       }
     });
   }
 
   deleteContent(name: string) {
-    if (!confirm('Action is irrevertable. Delete content - ' + name + '?')) return;
+    if (!confirm('Action is irrevertable. Delete content - ' + name + '?'))
+      return;
 
     this.ws.send('delete_content', { folder_name: name });
     this.ws.once('delete_content_result').subscribe(() => this.refresh());
+  }
+
+  getYoutubeUrl(content: any) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://i.ytimg.com/vi/${content.folder_name}/mq1.jpg`
+    );
   }
 }
