@@ -157,7 +157,9 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.controls.input.valueChanges.pipe(debounceTime(300)).subscribe(input => {
-      this.form.controls.ID.setValue(input?.split('watch?v=')[1] || '');
+      const url = new URL(input as string);
+      const id = url.searchParams.get('v')
+      this.form.controls.ID.setValue(id);
       this.cdr.detectChanges();
     })
   }
