@@ -76,7 +76,6 @@ export class ContentCreatorComponent implements OnInit {
         ];
         this.running = false;
         this.details[orderedStepName[this.stepper.selectedIndex + 1]] = res;
-        this.stepper.next();
       });
     }
   }
@@ -92,6 +91,7 @@ export class ContentCreatorComponent implements OnInit {
     this.running = true;
     console.log(this.stepper);
     const step = this.stepper.selectedIndex + 1;
+    this.stepper.next();
     this.ws.send('execute_content_step', {
       step: step,
       folder_name: this.id,
