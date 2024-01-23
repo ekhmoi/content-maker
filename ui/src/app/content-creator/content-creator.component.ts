@@ -76,7 +76,7 @@ export class ContentCreatorComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       const step = +(this.route.snapshot.queryParamMap.get('step') || '0');
-      this.stepper.selectedIndex = step;
+      this.stepper && (this.stepper.selectedIndex = step);
       this.stepper.selectionChange.subscribe((val) => {
         this.router.navigate(['.'], {
           relativeTo: this.route,
@@ -103,6 +103,9 @@ export class ContentCreatorComponent implements OnInit, AfterViewInit {
             {} as any
           );
           this.originalDetails = JSON.parse(JSON.stringify(this.details));
+          this.images = (this.details.image_generator_result || '')
+            .split('\n')
+            .filter((image: string) => !!image?.trim());
         });
       this.ws.open.pipe(filter((open) => !!open)).subscribe(() => {
         this.ws.send('get_content_details', this.id);
@@ -148,7 +151,7 @@ export class ContentCreatorComponent implements OnInit, AfterViewInit {
     this.executeStep(step);
   }
 
-  executeStep(step = this.stepper.selectedIndex) {
+  executeStep(step = this.stepper?.selectedIndex) {
     this.running = true;
     this.executingStep = step;
     if (step === 5) {
