@@ -78,8 +78,8 @@ class ScriptGenerator(BaseStep):
         Use provided function 'generate_script' for response.
     '''
 
-    def __init__(self, output_folder, openai):
-        super().__init__('ScriptGenerator', output_folder, openai)
+    def __init__(self, *args):
+        super().__init__('ScriptGenerator', *args)
     
     def execute(self, analysis: str):
         self.log('4 - Starting script generation...')

@@ -8,40 +8,47 @@ import os
 from src.steps.base_step import BaseStep
 
 class InputConverter(BaseStep):
-    def __init__(self, output_folder, openai):
-        super().__init__('InputConverter', output_folder, openai)
+    def __init__(self, *args):
+        super().__init__('InputConverter', *args)
 
     def execute(self, url: str):
         wav_file = None
         if url.startswith('https://youtube.com') or url.startswith('https://www.youtube.com'):
-            self.log("Starting download from youtube...")
             video_file = self.download_video(url)
-            self.log("Download completed.")
-            self.log("Converting to wav...")
             wav_file = self.convert_to_wav(video_file)
-            self.log("Conversion completed")
-            final_path = os.path.join(self.output_folder, 'input.wav')
+            final_path = self.get_path('input.wav')
             os.rename(wav_file, final_path)
-            return final_path
+
+            return self.convert_local_file(final_path)
         else:
             return self.convert_local_file(url)
             
 
     def download_video(self, url):
+        self.send_message('download_video_start', {'step': 1, 'title': self.output_folder})
+
         yt = YouTube(url)
         video = yt.streams.filter(only_audio=True).first()
-        return video.download(output_path=self.output_folder)
+        video_url = video.download(output_path=self.output_folder)
+
+        self.send_message('download_video_end', {'step': 1, 'title': self.output_folder})
+
+        return video_url
 
     def convert_to_wav(self, filename):
+        self.send_message('convert_to_wav_start', {'step': 1, 'title': self.output_folder})
+
         clip = AudioFileClip(filename)
         wav_filename = filename.replace('.mp4', '.wav')
         clip.write_audiofile(wav_filename, codec='pcm_s16le')
         os.remove(filename)  # Remove the original download
+
+        self.send_message('convert_to_wav_end', {'step': 1, 'title': self.output_folder})
         return wav_filename
 
 
     def convert_local_file(self, input_path: str):
-        self.log('1 - Starting file conversion...')
+        self.send_message('convert_local_file_start', {'step': 1, 'title': self.output_folder})
         try:
             # Load the input file
             audio = AudioSegment.from_file(input_path)
@@ -52,9 +59,10 @@ class InputConverter(BaseStep):
             # Export the file as a WAV
             audio.export(output_path, format='wav', parameters=["-ac", "1", "-ar", "16000"])
 
-            self.log(f'1 - File conversion complete - Result is saved to: {output_path}')
+            self.send_message('convert_local_file_end', {'step': 1, 'title': self.output_folder})
             return output_path
 
         except Exception as e:
             self.log(f"An error occurred during file conversion: {str(e)}")
+            self.send_message('convert_local_file_failed', {'step': 1, 'title': self.output_folder})
             return None

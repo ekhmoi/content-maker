@@ -2,14 +2,15 @@ import json
 from src.steps.base_step import BaseStep
 
 class ImageGenerator(BaseStep):
-    def __init__(self, output_folder, openai):
-        super().__init__('ImageGenerator', output_folder, openai)
+    def __init__(self, *args):
+        super().__init__('ImageGenerator', *args)
         
     def execute(self, image_descriptions: str):
         """
         Generate images for each scene description using DALL-E and save the image URLs.
         """
         self.log('6 - Starting image generation...')
+        self.send_message('executing', {'step': 6, 'title': self.output_folder})
         image_urls = []
         image_urls_path = self.get_path("image_generator_result.txt")
         
@@ -29,6 +30,7 @@ class ImageGenerator(BaseStep):
                             n=1,
                         )
                         image_url = response.data[0].url
+                        self.send_message('image_generated', {'step': 6, 'title': self.output_folder, 'image_url': image_url})
                         image_urls.append(image_url)
                         file.write(image_url + "\n")
                         self.log(f'6 - Image generation complete: {image_url}')

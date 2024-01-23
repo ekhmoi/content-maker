@@ -30,12 +30,13 @@ class TextAnalyzer(BaseStep):
         Use provided function 'analyze_text' for response.
     '''
 
-    def __init__(self, output_folder,  openai):
-        super().__init__('TextAnalyzer', output_folder, openai)
+    def __init__(self, *args):
+        super().__init__('TextAnalyzer', *args)
     
     def execute(self, text: str):
         self.log('3 - Starting analysis of text: ' + text)
         try:
+            self.send_message('executing_step', {'step': 3, 'title': self.output_folder})
             response = self.openai.chat.completions.create(
                 model='gpt-3.5-turbo-0613',
                 messages=[
