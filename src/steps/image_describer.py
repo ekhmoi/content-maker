@@ -46,7 +46,7 @@ class ImageDescriber(BaseStep):
     """
 
     def __init__(self, *args):
-        super().__init__('ImageDescriber', *args)
+        super().__init__('image_describer', *args)
         
     def execute(self, script: str):
         """

@@ -2,7 +2,7 @@ from src.steps.base_step import BaseStep
 
 class AudioTranscriber(BaseStep):
     def __init__(self, *args):
-        super().__init__('AudioTranscriber', *args)
+        super().__init__('audio_transcriber', *args)
     
     def execute(self, wav_path: str):
         self.log('2 - Starting audio transcription...')

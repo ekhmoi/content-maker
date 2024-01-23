@@ -19,12 +19,14 @@ class ContentStepExecutor:
         self.results = {}
         self.message_queue = message_queue
         
-        self.input_converter = InputConverter(output_folder, self.openai, self.message_queue)
-        self.audio_transcriber = AudioTranscriber(output_folder, self.openai, self.message_queue)
-        self.text_analyzer = TextAnalyzer(output_folder, self.openai, self.message_queue)
-        self.script_generator = ScriptGenerator(output_folder, self.openai, self.message_queue)
-        self.image_describer = ImageDescriber(output_folder, self.openai, self.message_queue)
-        self.image_generator = ImageGenerator(output_folder, self.openai, self.message_queue)
+        self.metadata = self.init_content_repository()
+        
+        self.input_converter = InputConverter(output_folder, self.openai, self.message_queue, self.metadata)
+        self.audio_transcriber = AudioTranscriber(output_folder, self.openai, self.message_queue, self.metadata)
+        self.text_analyzer = TextAnalyzer(output_folder, self.openai, self.message_queue, self.metadata)
+        self.script_generator = ScriptGenerator(output_folder, self.openai, self.message_queue, self.metadata)
+        self.image_describer = ImageDescriber(output_folder, self.openai, self.message_queue, self.metadata)
+        self.image_generator = ImageGenerator(output_folder, self.openai, self.message_queue, self.metadata)
 
         self.steps = [
             {'step': self.input_converter, 'step_name': self.input_converter.step_name},
@@ -35,18 +37,28 @@ class ContentStepExecutor:
             {'step': self.image_generator, 'step_name': self.image_generator.step_name}
         ]
         
-        self.init_content_repository()
         
     def init_content_repository(self):
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
-            self.metadata = {
-                'created_at': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            metadata = {
+                'created_at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'folder_name': self.output_folder, 
-                'initial_input': self.input_path 
+                'initial_input': self.input_path,
+                'steps_data': {
+                    'input_converter': {},
+                    'audio_transcriber': {},
+                    'text_analyzer': {},
+                    'script_generator': {},
+                    'image_describer': {},
+                    'image_generator': {}
+                }
             }
-            with open(self.output_folder + '/manifest.json', 'w', encoding='utf-8') as output_file:
-                output_file.write(json.dumps(self.metadata))
+            
+            with open(self.output_folder + '/metadata.json', 'w', encoding='utf-8') as output_file:
+                output_file.write(json.dumps(metadata))
+        with open(self.output_folder + '/metadata.json', 'r', encoding='utf-8') as input_file:
+            return json.load(input_file)
       
     def execute(self):
         # The initial input for the first step

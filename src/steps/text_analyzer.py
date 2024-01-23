@@ -31,7 +31,7 @@ class TextAnalyzer(BaseStep):
     '''
 
     def __init__(self, *args):
-        super().__init__('TextAnalyzer', *args)
+        super().__init__('text_analyzer', *args)
     
     def execute(self, text: str):
         self.log('3 - Starting analysis of text: ' + text)

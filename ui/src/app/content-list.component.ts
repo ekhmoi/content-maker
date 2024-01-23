@@ -53,7 +53,7 @@ import { DomSanitizer } from '@angular/platform-browser';
     <mat-card *ngFor="let content of contents" class="content-card">
       <mat-card-header>
         <!-- <div mat-card-avatar class="example-header-image"></div> -->
-        <mat-card-title>{{ content.folder_name }}</mat-card-title>
+        <mat-card-title>{{ content.metadata.video_title }}</mat-card-title>
         <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
       </mat-card-header>
       <img
@@ -83,7 +83,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   `,
 })
 export class ContentListComponent implements OnInit {
-  contents: { file_names: string[]; folder_name: string }[] = [];
+  contents: { file_names: string[]; folder_name: string, metadata: any }[] = [];
   constructor(
     private router: Router,
     private dialog: MatDialog,

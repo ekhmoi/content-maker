@@ -9,7 +9,7 @@ from src.steps.base_step import BaseStep
 
 class InputConverter(BaseStep):
     def __init__(self, *args):
-        super().__init__('InputConverter', *args)
+        super().__init__('input_converter', *args)
 
     def execute(self, url: str):
         wav_file = None
@@ -28,6 +28,7 @@ class InputConverter(BaseStep):
         self.send_message('download_video_start', {'step': 1, 'title': self.output_folder})
 
         yt = YouTube(url)
+        self.update_metadata('video_title', yt.title)
         video = yt.streams.filter(only_audio=True).first()
         video_url = video.download(output_path=self.output_folder)
 

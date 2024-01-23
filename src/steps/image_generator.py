@@ -3,7 +3,7 @@ from src.steps.base_step import BaseStep
 
 class ImageGenerator(BaseStep):
     def __init__(self, *args):
-        super().__init__('ImageGenerator', *args)
+        super().__init__('image_generator', *args)
         
     def execute(self, image_descriptions: str):
         """

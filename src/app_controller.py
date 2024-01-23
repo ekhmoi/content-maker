@@ -40,9 +40,6 @@ class AppController:
             'serve': self.start_serve
         }
 
-    
-
-
     def process_messages(self, processing_func, server):
         try:
             while True:

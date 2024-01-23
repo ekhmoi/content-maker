@@ -79,7 +79,7 @@ class ScriptGenerator(BaseStep):
     '''
 
     def __init__(self, *args):
-        super().__init__('ScriptGenerator', *args)
+        super().__init__('script_generator', *args)
     
     def execute(self, analysis: str):
         self.log('4 - Starting script generation...')

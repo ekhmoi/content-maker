@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import concurrent.futures
@@ -24,9 +25,12 @@ class ContentManager:
                 item_path = os.path.join(self.output_folder, item)
                 # Check if the item is a directory
                 if os.path.isdir(item_path):
+                    with open(item_path + '/metadata.json', 'r') as file:
+                        metadata = file.read()
                     folder_contents = {
                         'folder_name': item,
-                        'file_names': [f for f in os.listdir(item_path) if os.path.isfile(os.path.join(item_path, f))]
+                        'file_names': [f for f in os.listdir(item_path) if os.path.isfile(os.path.join(item_path, f))],
+                        'metadata': json.loads(metadata)
                     }
                     content_list.append(folder_contents)
 
