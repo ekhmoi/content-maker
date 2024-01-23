@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { WebsocketService } from '../websocker.service';
-import { filter } from 'rxjs';
+import { filter, map, tap } from 'rxjs';
 import { MATERIAL_COMPONENTS } from '../material.components';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,6 +27,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   ],
 })
 export class ContentCreatorComponent implements OnInit, AfterViewInit {
+  images: string[] = [];
+  loadingImages = false;
+  executingStep!: number;
   step1Control = new FormGroup({
     formCtrl: new FormControl('', [Validators.required]),
   });
@@ -75,8 +78,11 @@ export class ContentCreatorComponent implements OnInit, AfterViewInit {
       const step = +(this.route.snapshot.queryParamMap.get('step') || '0');
       this.stepper.selectedIndex = step;
       this.stepper.selectionChange.subscribe((val) => {
-        console.log('Next value', val);
-        this.router.navigate(['.'], {relativeTo: this.route, queryParams: {step: val.selectedIndex}, replaceUrl: true})
+        this.router.navigate(['.'], {
+          relativeTo: this.route,
+          queryParams: { step: val.selectedIndex },
+          replaceUrl: true,
+        });
       });
     }, 50);
   }
@@ -112,8 +118,20 @@ export class ContentCreatorComponent implements OnInit, AfterViewInit {
           'image_generator_result',
         ];
         this.running = false;
-        this.details[orderedStepName[this.stepper.selectedIndex]] = res;
+        const step = this.executingStep ?? this.stepper.selectedIndex;
+        this.details[orderedStepName[step]] = res;
+        if (step === 5) {
+          this.loadingImages = false;
+        }
       });
+
+      this.ws
+        .on('image_generated')
+        .pipe(
+          filter((data) => data.title.includes(this.id)),
+          map((data) => data.image_url)
+        )
+        .subscribe((image: string) => this.images.push(image));
     }
   }
 
@@ -132,6 +150,10 @@ export class ContentCreatorComponent implements OnInit, AfterViewInit {
 
   executeStep(step = this.stepper.selectedIndex) {
     this.running = true;
+    this.executingStep = step;
+    if (step === 5) {
+      this.loadingImages = true;
+    }
     this.ws.send('execute_content_step', {
       step: step,
       folder_name: this.id,

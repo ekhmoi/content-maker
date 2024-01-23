@@ -36,16 +36,6 @@ import {
               placeholder="Youtube URL"
             />
           </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>ID</mat-label>
-            <input
-              type="text"
-              matInput
-              formControlName="ID"
-              placeholder="Content ID"
-            />
-          </mat-form-field>
           <!-- <p style="text-align: center">or</p>
           <mat-form-field appearance="outline">
             <mat-label>Drop a file</mat-label>

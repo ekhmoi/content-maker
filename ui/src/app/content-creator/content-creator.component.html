@@ -112,7 +112,11 @@
       <button
         mat-raised-button
         [disabled]="running || !details.audio_transcriber_result"
-        [matTooltip]="!details.audio_transcriber_result ? 'Output of current step is required to continue' : ''"
+        [matTooltip]="
+          !details.audio_transcriber_result
+            ? 'Output of current step is required to continue'
+            : ''
+        "
         color="primary"
         (click)="onNextClick()"
       >
@@ -172,7 +176,11 @@
       <button
         mat-raised-button
         [disabled]="running || !details.text_analyzer_result"
-        [matTooltip]="!details.text_analyzer_result ? 'Output of current step is required to continue' : ''"
+        [matTooltip]="
+          !details.text_analyzer_result
+            ? 'Output of current step is required to continue'
+            : ''
+        "
         color="primary"
         (click)="onNextClick()"
       >
@@ -231,7 +239,11 @@
       <button
         mat-raised-button
         [disabled]="running || !details.script_generator_result"
-        [matTooltip]="!details.script_generator_result ? 'Output of current step is required to continue' : ''"
+        [matTooltip]="
+          !details.script_generator_result
+            ? 'Output of current step is required to continue'
+            : ''
+        "
         color="primary"
         (click)="onNextClick()"
       >
@@ -290,7 +302,11 @@
       <button
         mat-raised-button
         [disabled]="running || !details.image_describer_result"
-        [matTooltip]="!details.image_describer_result ? 'Output of current step is required to continue' : ''"
+        [matTooltip]="
+          !details.image_describer_result
+            ? 'Output of current step is required to continue'
+            : ''
+        "
         color="primary"
         (click)="onNextClick()"
       >
@@ -334,14 +350,17 @@
             </button>
           </div>
         </mat-toolbar>
-        <mat-form-field appearance="outline">
-          <mat-label>Images</mat-label>
-          <textarea
-            readonly
-            matInput
-            [(ngModel)]="details.image_generator_result"
-          ></textarea>
-        </mat-form-field>
+        <div class="images-container">
+          <mat-card *ngFor="let image of images">
+            <img [src]="image" alt="" width="100%" height="100%" />
+          </mat-card>
+          <mat-card
+            *ngIf="loadingImages"
+            style="display: flex; align-items: center; justify-content: center"
+          >
+            <mat-spinner diameter="100"></mat-spinner>
+          </mat-card>
+        </div>
       </div>
     </div>
     <div>
@@ -349,7 +368,11 @@
       <button
         mat-raised-button
         [disabled]="running || !details.image_generator_result"
-        [matTooltip]="!details.image_generator_result ? 'Output of current step is required to continue' : ''"
+        [matTooltip]="
+          !details.image_generator_result
+            ? 'Output of current step is required to continue'
+            : ''
+        "
         color="primary"
         (click)="onNextClick()"
       >

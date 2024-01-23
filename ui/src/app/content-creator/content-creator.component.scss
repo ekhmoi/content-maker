@@ -65,3 +65,15 @@ mat-stepper {
     border-radius: 40px;
   }
 }
+
+.images-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  mat-card {
+    width: 20vw;
+    height: 20vw;
+    margin: 1rem;
+  }
+}
