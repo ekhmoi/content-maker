@@ -24,7 +24,7 @@ class ImageGenerator(BaseStep):
                         self.log(f'6 - Generation image for action: {action["actionId"]} in scene: {scene["sceneId"]}...')
                         response = self.openai.images.generate(
                             model="dall-e-3",
-                            prompt=action['imageDescription'],
+                            prompt=action['imageDescription'] + '. Generated image should be in a style like Matrix movie.',
                             size="1024x1024",
                             quality="standard",
                             n=1,

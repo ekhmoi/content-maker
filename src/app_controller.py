@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import asyncio
 import threading
 import os
+from queue import Queue
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -65,7 +66,7 @@ class AppController:
         if not os.path.exists(self.args.output):
             os.makedirs(self.args.output)
 
-        content_maker = ContentStepExecutor(int(self.args.step), self.args.input, self.args.output, self.args.key)
+        content_maker = ContentStepExecutor(int(self.args.step), self.args.input, self.args.output, self.args.key, Queue())
         content_maker.execute()
 
     def start_serve(self):
