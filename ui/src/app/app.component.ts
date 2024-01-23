@@ -12,10 +12,11 @@ import { Subscription } from 'rxjs';
   template: '<router-outlet></router-outlet>',
 })
 export class AppComponent {
+  wsURI = 'ws://localhost:6789'
   wsSubscription!: Subscription;
   constructor(private websocketService: WebsocketService) {
     this.wsSubscription = this.websocketService
-      .connect('ws://localhost:6789')
+      .connect(this.wsURI)
       .subscribe(
         (message) => {
           console.log('Received message:', message);

@@ -20,20 +20,13 @@ import {
 
     <div mat-dialog-content>
       <ng-container *ngIf="!loading && !created">
-        To start creating your next awesome content provide some initial data.
+        <p>
+          To start creating your next awesome content provide some initial data.
+        </p>
         <form
           [formGroup]="form"
           style="display: flex; flex-direction: column; width: 100%; margin-top: 1rem"
         >
-          <mat-form-field appearance="outline">
-            <mat-label>Title</mat-label>
-            <input
-              type="text"
-              matInput
-              formControlName="title"
-              placeholder="Name your new content"
-            />
-          </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Youtube URL</mat-label>
             <input
@@ -43,11 +36,21 @@ import {
               placeholder="Youtube URL"
             />
           </mat-form-field>
-          <p style="text-align: center">or</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>ID</mat-label>
+            <input
+              type="text"
+              matInput
+              formControlName="ID"
+              placeholder="Content ID"
+            />
+          </mat-form-field>
+          <!-- <p style="text-align: center">or</p>
           <mat-form-field appearance="outline">
             <mat-label>Drop a file</mat-label>
             <input type="input" matInput placeholder="Drop your file here" />
-          </mat-form-field>
+          </mat-form-field> -->
           <mat-slide-toggle
             formControlName="automaticSteps"
             style="margin: 1rem 0"
@@ -60,6 +63,7 @@ import {
               style="min-height: 8rem"
               type="input"
               matInput
+              formControlName="prompt"
               placeholder="You can improve result by providing key points to focus for example"
             ></textarea>
           </mat-form-field>
@@ -67,18 +71,19 @@ import {
       </ng-container>
 
       <ng-container *ngIf="created">
-        Youtube content has been downloaded and converted. Ready for the next
-        steps?
+        <p>
+          Youtube content has been downloaded and converted. Ready for the next
+          steps?
+        </p>
       </ng-container>
-      <ng-container *ngIf=""></ng-container>
 
       <div *ngIf="loading || created">
         <ng-container *ngIf="!created">
-          To start creating your next awesome content provide some initial data.
+          <p>Processing input video...</p>
         </ng-container>
         <div class="progress-messages">
           <div class="message" *ngFor="let message of currentMessages">
-            > {{ message }}
+            {{ message }}
           </div>
         </div>
       </div>
@@ -109,7 +114,8 @@ import {
         padding: 0.75rem 1rem;
         border-radius: 7px;
         font-style: italic;
-        line-height: 2;
+        line-height: 35px;
+        box-shadow: inset 0px 0px 5px 0px rgb(0 0 0 / 41%);
         height: 80px;
         overflow-x: hidden;
         overflow-y: scroll;
@@ -126,7 +132,7 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
   currentLoadingStep: string = '';
   subs: Subscription[] = [];
   currentMessages: string[] = [
-    `${new Date().toJSON().substr(11, 8)} Initialized new folder.`,
+    `[${new Date().toJSON().substr(11, 8)}] Initialized new folder.`,
   ];
   messages: { [key: string]: string } = {
     download_video_start: 'Started to download video...',
@@ -137,17 +143,24 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
     convert_local_file_end: 'Reducing file size completed.',
   };
   form = new FormGroup({
-    title: new FormControl(''),
+    ID: new FormControl(''),
     input: new FormControl(''),
-    automaticSteps: new FormControl(true),
+    automaticSteps: new FormControl({ value: false, disabled: true }),
+    prompt: new FormControl({value: '', disabled: true}),
   });
+
   constructor(
     private dialogRef: MatDialogRef<NewContentConfigComponent>,
     private ws: WebsocketService,
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.form.controls.input.valueChanges.pipe(debounceTime(300)).subscribe(input => {
+      this.form.controls.ID.setValue(input?.split('watch?v=')[1] || '');
+      this.cdr.detectChanges();
+    })
+  }
 
   ngOnDestroy() {
     this.subs.forEach((sub) => sub?.unsubscribe());
@@ -158,7 +171,7 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.ws.send('execute_content_step', {
       step: 0,
-      folder_name: this.form.value.title,
+      folder_name: this.form.value.ID,
       input: this.form.value.input,
     });
     this.ws.once('execute_content_step_result').subscribe((res) => {
@@ -174,7 +187,7 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
         )
         .subscribe(({ command }) => {
           this.currentMessages.unshift(
-            `${new Date().toJSON().substr(11, 8)} ${this.messages[command]}`
+            `[${new Date().toJSON().substr(11, 8)}] ${this.messages[command]}`
           );
 
           if (command === 'convert_local_file_end') {
@@ -187,6 +200,8 @@ export class NewContentConfigComponent implements OnInit, OnDestroy {
   }
 
   goToNewContent() {
-    this.dialogRef.close(this.result?.split('outputs/')?.[1]?.split('/input.wav')?.[0]);
+    this.dialogRef.close(
+      this.result?.split('outputs/')?.[1]?.split('/input.wav')?.[0]
+    );
   }
 }

@@ -2,10 +2,9 @@ import os
 import shutil
 import concurrent.futures
 from queue import Queue
-import asyncio
 
 from src.websocket_server import WebSocketServer
-from src.content_maker import ContentMaker
+from src.content_step_executor import ContentStepExecutor
 from src.steps.input_converter import InputConverter
 
 class ContentManager:
@@ -98,13 +97,9 @@ class ContentManager:
         inputIndex = 0 if step == 0 else step - 1
         input_path = data.get('input') or f'{output_folder}/{orderedStepName[inputIndex]}'
 
-        content_maker = ContentMaker(step, input_path, output_folder, self.openai_api_key, queue)
-        step_to_execute = content_maker.steps[step]
+        step_executor = ContentStepExecutor(step, input_path, output_folder, self.openai_api_key, queue)
 
-        # Execute the ContentMaker
-        step_input = input_path if content_maker.startStep < 2 else content_maker.read_file(input_path)
-        result = step_to_execute['step'].execute(step_input)
-        return result  # Return the result from the thread
+        return step_executor.execute_step()  # Return the result from the thread
 
     # Somewhere in your main thread or async loop
     async def process_message_queue(self, ws: WebSocketServer):

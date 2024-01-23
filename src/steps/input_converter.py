@@ -57,7 +57,7 @@ class InputConverter(BaseStep):
             output_path = self.get_path('input.wav')
 
             # Export the file as a WAV
-            audio.export(output_path, format='wav', parameters=["-ac", "1", "-ar", "16000"])
+            audio.export(output_path, format='wav', parameters=["-ac", "1", "-ar", "8000"])
 
             self.send_message('convert_local_file_end', {'step': 1, 'title': self.output_folder})
             return output_path

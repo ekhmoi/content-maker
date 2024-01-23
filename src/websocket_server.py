@@ -38,7 +38,6 @@ class WebSocketServer:
         await asyncio.gather(*tasks)
 
     async def handler(self, websocket, path):
-        print('New client connected', websocket)
         self.connected_clients.add(websocket)
         try:
             async for message in websocket:

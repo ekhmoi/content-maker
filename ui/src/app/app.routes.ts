@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { ContentListComponent } from './content-list.component';
-import { ContentCreatorComponent } from './content-creator.component';
+import { ContentCreatorComponent } from './content-creator/content-creator.component';
 
 export const routes: Routes = [
   { path: '', component: ContentListComponent },
