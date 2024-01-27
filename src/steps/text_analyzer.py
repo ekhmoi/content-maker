@@ -7,10 +7,9 @@ import json
 
 
 class TextAnalyzer(BaseStep):
-    openai_prompt = '''
+    llm_prompt = '''
         Analyze this text and provide key themes and insights with detailed descriptions.
         Return the items in a JSON array.
-        Use provided function 'analyze_text' for response.
     '''
 
     def __init__(self, *args):
@@ -22,7 +21,7 @@ class TextAnalyzer(BaseStep):
             self.send_message('executing_step', {'step': 3, 'title': self.output_folder})
             template = {'key_points': ["keypoint1", "keypoint2", "keypoint3"]}
             response = ollama.chat(model='llama2', messages=[
-                {'role': 'system', 'content': self.openai_prompt},
+                {'role': 'system', 'content': self.llm_prompt},
                 {'role': 'user', 'content': f'{text}. Use the following template: {json.dumps(template)}.'}
             ], format='json')
             result = response['message']['content']

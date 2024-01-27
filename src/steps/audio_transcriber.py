@@ -1,4 +1,3 @@
-# Import the necessary libraries
 import whisper
 
 from src.steps.base_step import BaseStep
