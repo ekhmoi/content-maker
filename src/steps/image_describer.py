@@ -38,12 +38,7 @@ response_defenition = {
 }
 
 class ImageDescriber(BaseStep):
-    openai_prompt = """
-        Generate a detailed description for the each 'action' of the each item in 'scenes' in provided 'script' JSON object.
-        The description should be detailed enough to draw an highy detailed image of the action. 
-        Consider the context provided in the script, including the genre, synopsis and characters.
-        Use provided function 'describe_image' for response.
-    """
+    openai_prompt = "Using the provided 'script' JSON object, generate comprehensive and vivid descriptions for each key action within each scene. Each description should paint a clear and detailed picture suitable for image creation. Focus on character appearances, expressions, and movements, the specific setting of the scene, and any important props or background elements. Incorporate the overall genre, mood, and synopsis of the script to ensure that each description aligns with the story's tone and context. Utilize the 'describe_image' function for formatting the responses."
 
     def __init__(self, *args):
         super().__init__('image_describer', *args)

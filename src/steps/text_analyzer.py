@@ -1,27 +1,10 @@
 from src.steps.base_step import BaseStep
+import ollama
+import json
 
-response_defenition = {
-    'type': 'function',
-    'function': {
-        'name':'analyze_text',
-        'description': 'Used to analyze text',
-        'parameters': {
-            'type': 'object',
-            'properties': {
-                'key_points': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'title': { 'type': 'string' },
-                            'description': { 'type': 'string' }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+# response = 
+# print(response['message']['content'])
+
 
 class TextAnalyzer(BaseStep):
     openai_prompt = '''
@@ -37,17 +20,12 @@ class TextAnalyzer(BaseStep):
         self.log('3 - Starting analysis of text: ' + text)
         try:
             self.send_message('executing_step', {'step': 3, 'title': self.output_folder})
-            response = self.openai.chat.completions.create(
-                model='gpt-3.5-turbo-0613',
-                messages=[
-                    {'role': 'system', 'content': self.openai_prompt},
-                    {'role': 'user', 'content': text}
-                ],
-                tools=[response_defenition],
-                tool_choice={ 'type': 'function', 'function': { 'name': 'analyze_text' } },
-            )
-            
-            result = response.choices[0].message.tool_calls[0].function.arguments
+            template = {'key_points': ["keypoint1", "keypoint2", "keypoint3"]}
+            response = ollama.chat(model='llama2', messages=[
+                {'role': 'system', 'content': self.openai_prompt},
+                {'role': 'user', 'content': f'{text}. Use the following template: {json.dumps(template)}.'}
+            ], format='json')
+            result = response['message']['content']
             analysis_file_path = self.get_path('text_analyzer_result.txt')
 
             self.save_result(analysis_file_path, result)
