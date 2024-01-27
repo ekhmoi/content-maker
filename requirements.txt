@@ -6,3 +6,7 @@ pytube
 watchdog
 moviepy
 python-dotenv
+whisper
+langchain
+requests
+ollama
